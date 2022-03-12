@@ -1,6 +1,6 @@
 #include "functions.h"
 
-void loginSection()
+void loginSection(Node *pHead)
 {
     string username;
     string password;
@@ -11,24 +11,26 @@ void loginSection()
     cout << "Enter Your Password: ";
     cin >> password;
 
-    bool ok = validateUser(username, password);
+    bool ok = validateUser(username, password, pHead);
 
     if (ok)
     {
-        
+        cout << "login successfully" << endl;
     }
     else
     {
-        cout<<"Your password is incorrect!!!";
+        cout << "Your password is incorrect!!!";
     }
 }
 
-bool validateUser(string username, string password)
+void ExtractInfoFromCSVFileAndTurnToSLL(Node *&pHead)
 {
     ifstream input;
     input.open("./inputs/Students List.csv");
     string temp;
-    getline(input, temp);
+    getline(input, temp); // ignore the first row of the sheet(title row)
+
+    Node *pCur = pHead;
 
     while (input.good())
     {
@@ -41,15 +43,65 @@ bool validateUser(string username, string password)
         getline(input, Password, ',');
         getline(input, Gender, ',');
         getline(input, Email, ',');
-        getline(input, Class, ',');
+        getline(input, Class);
 
-        if (username == Username && password == Password)
+        if (!pHead)
         {
-            return true;
+            pHead = new Node;
+            pHead->student.no = no;
+            pHead->student.ID = ID;
+            pHead->student.LastName = LastName;
+            pHead->student.FirstName = FirstName;
+            pHead->student.Username = Username;
+            pHead->student.Password = Password;
+            pHead->student.Gender = Gender;
+            pHead->student.Email = Email;
+            pHead->student.Class = Class;
+            pHead->next = nullptr;
+            pCur = pHead;
         }
+        else
+        {
+            pCur->next = new Node;
+            pCur = pCur->next;
+            pCur->student.ID = ID;
+            pCur->student.LastName = LastName;
+            pCur->student.FirstName = FirstName;
+            pCur->student.Username = Username;
+            pCur->student.Password = Password;
+            pCur->student.Gender = Gender;
+            pCur->student.Email = Email;
+            pCur->student.Class = Class;
+            pCur->next = nullptr;
+        }
+    }
+}
+
+bool validateUser(string username, string password, Node *pHead)
+{
+    while (pHead)
+    {
+        if (pHead->student.Username == username && pHead->student.Password == password)
+            return true;
+        pHead = pHead->next;
     }
     return false;
 }
+
+// void displayStudentInfo(string No, string ID, string FirstName, string LastName, string Username, string Password, string Class)
+// {
+//     cout << "Your number in Students List: " << No << endl;
+//     cout << "ID: " << ID << endl;
+//     cout << "Full name: " << LastName << ' ' << FirstName << ' ' << endl;
+//     cout << "Class: " << Class << endl;
+//     cout << "--------------------------------------------------------------------" << endl;
+
+//     cout << "Username: " << Username << endl;
+//     cout << "Password: " << Password << endl;
+
+//     // change password option.
+//     // log out option
+// }
 
 void openCSVFileFromUserInput()
 {
