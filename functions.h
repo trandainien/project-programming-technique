@@ -2,6 +2,8 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <stdlib.h>
+#include <conio.h> //take getCh() from this library
 using namespace std;
 
 struct Student
@@ -16,6 +18,13 @@ struct Node
 };
 
 void openCSVFileFromUserInput();
-void loginSection(Node *pHead);
-bool validateUser(string username, string password, Node *pHead);
-void ExtractInfoFromCSVFileAndTurnToSLL(Node *&pHead);
+void loginSection();
+bool validateUser(string username, string password, Node *pHead, Student &curStudent);
+void ExtractStudentInfoFromCSVFileAndTurnToSLL(Node *&pHead);
+void StudentLoginSection(Node *pStudentSLL);
+void AcademicStaffLoginSection();
+void start();
+void displayStudentInfo(Student curStudent, Node *pStudentSLL);
+void writeCSVFile(Node *pStudentSLL);
+void updatePasswordChangeToCSVFile(Student curStudent, Node *&pStudentSLL);
+void changePassword(Student &curStudent);

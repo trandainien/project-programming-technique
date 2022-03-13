@@ -1,29 +1,88 @@
 #include "functions.h"
 
-void loginSection(Node *pHead)
+void start()
 {
+    loginSection();
+}
+
+void loginSection()
+{
+    int n;
+
+    system("CLS"); // used for clearing the console
+    cout << "***----------------------      Welcome to Student Management System    -----------------***" << endl;
+    cout << "Please choose whether you are student or teacher: " << endl;
+    cout << "1. Student" << endl;
+    cout << "2. Academic Staff" << endl;
+    cout << "3. End process" << endl;
+    cout << "Your choice: ";
+    cin >> n;
+
+    if (n == 1)
+    {
+        Node *pStudentSLL = nullptr;
+        ExtractStudentInfoFromCSVFileAndTurnToSLL(pStudentSLL);
+        StudentLoginSection(pStudentSLL);
+        delete[] pStudentSLL;
+    }
+    else if (n == 2)
+    {
+        AcademicStaffLoginSection();
+    }
+    else
+    {
+        cout << "Have a nice day ^-^ ";
+    }
+}
+
+void StudentLoginSection(Node *pStudentSLL)
+{
+    system("CLS");
+    cout << "***-------------        Welcome to Student Login Section        --------------***" << endl;
+
+    Student curStudent; // the student who is logging in
     string username;
     string password;
-    cout << "Login Section" << endl
-         << endl;
+
     cout << "Enter Your Account: ";
     cin >> username;
     cout << "Enter Your Password: ";
     cin >> password;
 
-    bool ok = validateUser(username, password, pHead);
+    bool ok = validateUser(username, password, pStudentSLL, curStudent);
 
     if (ok)
     {
-        cout << "login successfully" << endl;
+        displayStudentInfo(curStudent, pStudentSLL);
     }
     else
     {
-        cout << "Your password is incorrect!!!";
+        int n;
+
+        cout << "Your password is incorrect!!!" << endl;
+        cout << endl;
+        cout << "1. Enter username and password again" << endl;
+        cout << "2. Back to the login section" << endl;
+        cout << "Your option: ";
+        cin >> n;
+        if (n == 1)
+        {
+            StudentLoginSection(pStudentSLL);
+        }
+        else
+        {
+            loginSection();
+        }
     }
 }
 
-void ExtractInfoFromCSVFileAndTurnToSLL(Node *&pHead)
+void AcademicStaffLoginSection()
+{
+    system("CLS");
+    cout << "***------------------      Welcome to Academic Staff Login Section     ----------------***" << endl;
+}
+
+void ExtractStudentInfoFromCSVFileAndTurnToSLL(Node *&pHead)
 {
     ifstream input;
     input.open("./inputs/Students List.csv");
@@ -77,31 +136,104 @@ void ExtractInfoFromCSVFileAndTurnToSLL(Node *&pHead)
     }
 }
 
-bool validateUser(string username, string password, Node *pHead)
+bool validateUser(string username, string password, Node *pHead, Student &curStudent)
 {
     while (pHead)
     {
         if (pHead->student.Username == username && pHead->student.Password == password)
+        {
+            curStudent = pHead->student;
             return true;
+        }
         pHead = pHead->next;
     }
     return false;
 }
 
-// void displayStudentInfo(string No, string ID, string FirstName, string LastName, string Username, string Password, string Class)
-// {
-//     cout << "Your number in Students List: " << No << endl;
-//     cout << "ID: " << ID << endl;
-//     cout << "Full name: " << LastName << ' ' << FirstName << ' ' << endl;
-//     cout << "Class: " << Class << endl;
-//     cout << "--------------------------------------------------------------------" << endl;
+void displayStudentInfo(Student curStudent, Node *pStudentSLL)
+{
+    system("CLS");
+    int n;
 
-//     cout << "Username: " << Username << endl;
-//     cout << "Password: " << Password << endl;
+    cout << "No: " << curStudent.no << endl;
+    cout << "ID: " << curStudent.ID << endl;
+    cout << "Full name: " << curStudent.LastName << ' ' << curStudent.FirstName << ' ' << endl;
+    cout << "Class: " << curStudent.Class << ' ' << endl;
+    cout << "--------------------------------------------------------------------" << endl;
 
-//     // change password option.
-//     // log out option
-// }
+    cout << "Username: " << curStudent.Username << endl;
+    cout << "Password: " << curStudent.Password << endl;
+
+    cout << endl;
+    cout << "1. Log out" << endl;
+    cout << "2. Change Password" << endl;
+    cout << "Your option: ";
+    cin >> n;
+
+    if (n == 1)
+    {
+        loginSection();
+    }
+    else
+    {
+        changePassword(curStudent);
+        updatePasswordChangeToCSVFile(curStudent, pStudentSLL);
+        cout << "Successfully Updated!!!" << endl;
+        cout << "Hit any key to see the change.";
+        getch(); //hit any key and then execute then below function
+        displayStudentInfo(curStudent, pStudentSLL);
+    }
+    // change password option.
+    // log out option
+}
+
+void changePassword(Student &curStudent)
+{
+    string newPass;
+    cout << "Your new Password: ";
+    cin >> newPass;
+    curStudent.Password = newPass;
+}
+
+void updatePasswordChangeToCSVFile(Student curStudent, Node *&pStudentSLL)
+{
+    Node *pCur = pStudentSLL;
+    while (pCur)
+    {
+        if (pCur->student.ID == curStudent.ID)
+        {
+            pCur->student.Password = curStudent.Password;
+            break;
+        }
+        pCur = pCur->next;
+    }
+
+    writeCSVFile(pStudentSLL);
+}
+
+void writeCSVFile(Node *pStudentSLL)
+{
+    ofstream output;
+    output.open("./inputs/Students List.csv");
+    output << "No ,ID,Last name,Full name,Username,Password,Gender,Email,class" << endl;
+
+    while (pStudentSLL)
+    {
+        output << pStudentSLL->student.no << ',';
+        output << pStudentSLL->student.ID << ',';
+        output << pStudentSLL->student.LastName << ',';
+        output << pStudentSLL->student.FirstName << ',';
+        output << pStudentSLL->student.Username << ',';
+        output << pStudentSLL->student.Password << ',';
+        output << pStudentSLL->student.Gender << ',';
+        output << pStudentSLL->student.Email << ',';
+        output << pStudentSLL->student.Class << endl;
+
+        pStudentSLL = pStudentSLL->next;
+    }
+
+    output.close();
+}
 
 void openCSVFileFromUserInput()
 {

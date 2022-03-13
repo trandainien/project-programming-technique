@@ -2,10 +2,11 @@
 
 int main()
 {
-    Node *pHead = nullptr;
-    ExtractInfoFromCSVFileAndTurnToSLL(pHead);
-    loginSection(pHead);
+    start();
 
     //  bool ok = checkAccAndPass(account, password);
-    delete[] pHead;
 }
+
+// remind:
+// put the pStudentSLL to student login section
+
