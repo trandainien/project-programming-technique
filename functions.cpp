@@ -91,7 +91,7 @@ void ExtractStudentInfoFromCSVFileAndTurnToSLL(Node *&pHead)
 
     Node *pCur = pHead;
 
-    while (input.good())
+    while (!input.eof())
     {
         string no, ID, LastName, FirstName, Username, Password, Gender, Email, Class;
         getline(input, no, ',');
@@ -103,6 +103,9 @@ void ExtractStudentInfoFromCSVFileAndTurnToSLL(Node *&pHead)
         getline(input, Gender, ',');
         getline(input, Email, ',');
         getline(input, Class);
+
+        if (no == "")
+            return;
 
         if (!pHead)
         {
@@ -123,6 +126,7 @@ void ExtractStudentInfoFromCSVFileAndTurnToSLL(Node *&pHead)
         {
             pCur->next = new Node;
             pCur = pCur->next;
+            pCur->student.no = no;
             pCur->student.ID = ID;
             pCur->student.LastName = LastName;
             pCur->student.FirstName = FirstName;
@@ -180,7 +184,7 @@ void displayStudentInfo(Student curStudent, Node *pStudentSLL)
         updatePasswordChangeToCSVFile(curStudent, pStudentSLL);
         cout << "Successfully Updated!!!" << endl;
         cout << "Hit any key to see the change.";
-        getch(); //hit any key and then execute then below function
+        getch(); // hit any key and then execute then below function
         displayStudentInfo(curStudent, pStudentSLL);
     }
     // change password option.
@@ -197,17 +201,25 @@ void changePassword(Student &curStudent)
 
 void updatePasswordChangeToCSVFile(Student curStudent, Node *&pStudentSLL)
 {
+
     Node *pCur = pStudentSLL;
     while (pCur)
     {
         if (pCur->student.ID == curStudent.ID)
         {
             pCur->student.Password = curStudent.Password;
-            break;
         }
         pCur = pCur->next;
     }
 
+    // while (pCur->next)
+    // {
+
+    //     pCur = pCur->next;
+    // }
+
+    // delete pCur->next;
+    // pCur->next = nullptr;
     writeCSVFile(pStudentSLL);
 }
 
@@ -219,6 +231,7 @@ void writeCSVFile(Node *pStudentSLL)
 
     while (pStudentSLL)
     {
+
         output << pStudentSLL->student.no << ',';
         output << pStudentSLL->student.ID << ',';
         output << pStudentSLL->student.LastName << ',';
@@ -228,7 +241,6 @@ void writeCSVFile(Node *pStudentSLL)
         output << pStudentSLL->student.Gender << ',';
         output << pStudentSLL->student.Email << ',';
         output << pStudentSLL->student.Class << endl;
-
         pStudentSLL = pStudentSLL->next;
     }
 
@@ -260,4 +272,14 @@ void openCSVFileFromUserInput()
     }
 
     input.close();
+}
+
+void createNewDirectory()
+{
+    string s;
+    cout << "Your new File name: ";
+    getline(cin, s);
+    string url = "./inputs/School years/";
+    url += s;
+    mkdir(url.c_str());
 }
