@@ -40,3 +40,4 @@ void changePassword(Student &curStudent);
 void createNewDirectory();
 void ListAllFileNames(string address);
 string removeType(string s);
+void listOFYear(string initStrPath);
