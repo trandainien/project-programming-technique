@@ -283,3 +283,52 @@ void createNewDirectory()
     url += s;
     mkdir(url.c_str());
 }
+
+string removeType(string s)
+{
+    string ans = "";
+    for (int i = 0; i < s.length(); i++)
+    {
+        if (s[i] == '.')
+            break;
+        ans += s[i];
+    }
+    return ans;
+}
+
+void ListAllFileNames(string address)
+{
+    // libraries:  sys\stat.h, dirent.h, conio.h
+    struct dirent *d;
+    struct stat dst;
+
+    DIR *dr;
+
+    string path = ".\\inputs\\School years\\" + address + "\\";
+
+    dr = opendir(path.c_str());
+
+    if (dr != NULL)
+    {
+        for (d = readdir(dr); d != NULL; d = readdir(dr))
+        {
+            string type = d->d_name;
+            type = path + type;
+            if (stat(type.c_str(), &dst) == 0)
+            {
+                if (dst.st_mode & S_IFDIR)
+                {
+                }
+                else
+                {
+                    if (dst.st_mode & S_IFREG)
+                    {
+                        string name = removeType(d->d_name);
+                        cout << name << endl;
+                    }
+                }
+            }
+        }
+        closedir(dr);
+    }
+}
