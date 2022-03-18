@@ -2,13 +2,13 @@
 #include <iostream>
 #include <fstream>
 #include <string>
-#include <stdlib.h>
+//#include <stdlib.h>
 #include <conio.h> //take getCh() from this library
 
 #include <direct.h>
 
 using namespace std;
-
+    
 struct Course
 {
     string StartDate, EndDate, ID, Name, TeacherName, Day1, Day2, Time1, Time2;
