@@ -6,6 +6,7 @@
 #include <sys\stat.h>
 #include <dirent.h>
 #include <conio.h> //take getCh() from this library
+#include <stdio.h>
 using namespace std;
 
 struct Course
@@ -38,5 +39,5 @@ void writeCSVFile(Node *pStudentSLL);
 void updatePasswordChangeToCSVFile(Student curStudent, Node *&pStudentSLL);
 void changePassword(Student &curStudent);
 void createNewDirectory();
-void ListAllFileNames(string address);
+void ListAllFileNames(string address, bool isFile);
 string removeType(string s);

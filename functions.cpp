@@ -80,6 +80,17 @@ void AcademicStaffLoginSection()
 {
     system("CLS");
     cout << "***------------------      Welcome to Academic Staff Login Section     ----------------***" << endl;
+    string username;
+    string password;
+
+    cout << "Enter Your Account: ";
+    cin >> username;
+    cout << "Enter Your Password: ";
+    cin >> password;
+}
+
+void ExtractStaffInfoAndTurnToSLL(Node *&pHead)
+{
 }
 
 void ExtractStudentInfoFromCSVFileAndTurnToSLL(Node *&pHead)
@@ -142,6 +153,7 @@ void ExtractStudentInfoFromCSVFileAndTurnToSLL(Node *&pHead)
 
 bool validateUser(string username, string password, Node *pHead, Student &curStudent)
 {
+    // send list of user in here and take the username and password of each node
     while (pHead)
     {
         if (pHead->student.Username == username && pHead->student.Password == password)
@@ -296,8 +308,9 @@ string removeType(string s)
     return ans;
 }
 
-void ListAllFileNames(string address)
+void ListAllFileNames(string address, bool isFile)
 {
+
     // libraries:  sys\stat.h, dirent.h, conio.h
     struct dirent *d;
     struct stat dst;
@@ -316,15 +329,21 @@ void ListAllFileNames(string address)
             type = path + type;
             if (stat(type.c_str(), &dst) == 0)
             {
-                if (dst.st_mode & S_IFDIR)
-                {
-                }
-                else
+                if (isFile)
                 {
                     if (dst.st_mode & S_IFREG)
                     {
                         string name = removeType(d->d_name);
                         cout << name << endl;
+                    }
+                }
+                else
+                {
+                    if (dst.st_mode & S_IFDIR)
+                    {
+                        string name = removeType(d->d_name);
+                        if (name != "")
+                            cout << name << endl;
                     }
                 }
             }
