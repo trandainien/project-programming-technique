@@ -478,6 +478,7 @@ void viewSchoolYear()
     {
         if (n == num + 1)
         {
+            createNewSchoolYear();
         }
         else
         {
@@ -503,7 +504,8 @@ void viewClassesInSchoolYear(string address, string schoolYear)
     cout << endl;
 
     cout << num + 1 << ". Back to the School Years" << endl;
-    cout << num + 2 << ". Log out" << endl;
+    cout << num + 2 << ". Semesters" << endl;
+    cout << num + 3 << ". Log out" << endl;
     cout << "Your option: ";
     cin >> n;
 
@@ -519,7 +521,84 @@ void viewClassesInSchoolYear(string address, string schoolYear)
         }
         else
         {
-            loginSection();
+            if (n == num + 3)
+            {
+                loginSection();
+            }
+            else
+            {
+                viewSemesters(address, schoolYear);
+            }
+        }
+    }
+}
+
+void viewSemesters(string address, string schoolYear)
+{
+    system("CLS");
+
+    cout << "***------------------   Semesters in " << schoolYear << " ----------------***" << endl;
+
+    string semesters[100];
+    int num = 0;
+    int n;
+
+    ListAllFileNames(address + "/Semesters", false, semesters, num);
+    for (int i = 0; i < num; i++)
+    {
+        cout << i + 1 << ". " << semesters[i] << endl;
+    }
+    cout << endl;
+    if (num >= 3)
+    {
+        cout << num + 1 << ". Back to School years " << endl;
+        cout << num + 2 << ". Log out" << endl;
+        cout << "Your option: ";
+        cin >> n;
+    }
+    else
+    {
+        cout << num + 1 << ". Create new Semester" << endl;
+        cout << num + 2 << ". Back to School years " << endl;
+        cout << num + 3 << ". Log out" << endl;
+        cout << "Your option: ";
+        cin >> n;
+    }
+
+    if (n >= 1 && n <= num)
+    {
+        // viewCourse();
+    }
+    else
+    {
+        if (num >= 3)
+        {
+            if (n == num + 1)
+            {
+                viewSchoolYear();
+            }
+            else
+            {
+                loginSection();
+            }
+        }
+        else
+        {
+            if (n == num + 1)
+            {
+                CreateSemester(address, schoolYear);
+            }
+            else
+            {
+                if (n == num + 2)
+                {
+                    viewSchoolYear();
+                }
+                else
+                {
+                    loginSection();
+                }
+            }
         }
     }
 }
@@ -721,6 +800,53 @@ void writeCSVFile(string classAddress)
     output.close();
 }
 
+void createNewSchoolYear()
+{
+    string s;
+    cout << endl;
+    cout << "Create new school year(Year1 - Year2):" << endl;
+    cin.ignore();
+    getline(cin, s);
+
+    createNewDirectory("./inputs/School years/" + s);
+    cout << "Create successfully..." << endl;
+    getch();
+    viewSchoolYear();
+}
+
+void CreateSemester(string address, string schoolYear)
+{
+    struct stat dst, dst2;
+    string s1, s2, st, ed;
+    cout << "Your new semester: ";
+    cin.ignore();
+    getline(cin, s1);
+    cout << "School year to create(Year1 - Year2): ";
+
+    getline(cin, s2);
+    string url = "./inputs/School years/" + s2 + "/Semesters/" + s1;
+
+    // createNewDirectory(url.c_str());
+    if (stat(url.c_str(), &dst) == 0)
+    {
+        cout << "Semester existed, please try again \n";
+        CreateSemester(address, schoolYear);
+    }
+    else
+    {
+        string url2 = "./inputs/School years/" + s2 + "/Semesters/";
+        if (stat(url.c_str(), &dst2) != 0)
+        {
+            mkdir(url2.c_str());
+        }
+        mkdir(url.c_str());
+        cout << "Semester has been created. \n";
+    }
+    cout << "Create successfully..." << endl;
+    getch();
+    viewSemesters(address, schoolYear);
+}
+
 void openCSVFileFromUserInput()
 {
     string fileName = "./inputs/";
@@ -750,11 +876,9 @@ void openCSVFileFromUserInput()
 
 void createNewDirectory(string url)
 {
-    string s;
-    cout << "Your new File name: ";
-    getline(cin, s);
+
     // string url = "./inputs/School years/";
-    url += s;
+
     mkdir(url.c_str());
 }
 
@@ -824,8 +948,4 @@ template <typename T>
 void printElement(T t, const int &width)
 {
     cout << left << setw(width) << setfill(' ') << t;
-}
-
-void createNewSchoolYear()
-{
 }
