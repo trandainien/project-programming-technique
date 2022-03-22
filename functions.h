@@ -61,3 +61,4 @@ bool validateStaff(string username, string password, StaffList *pHead, Staff &st
 void ExtractStaffInfoAndTurnToSLL(StaffList *&pHead);
 void writeChangesToStaffCSV(StaffList *pHead);
 void changeStaffPassword(Staff &staff, StaffList *&pHead);
+void CreateSemester();
