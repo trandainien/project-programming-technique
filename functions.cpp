@@ -562,7 +562,7 @@ void ListAllFileNames(string address, bool isFile)
     }
 }
 
-void CreateSemester() 
+void CreateSemester() // create a new semester folder inside a school year folder
 {
     struct stat dst;
     string s1, s2;
