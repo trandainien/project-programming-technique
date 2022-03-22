@@ -43,17 +43,15 @@ void loginSection();
 void openCSVFileFromUserInput();
 
 // student
-void ExtractStudentInfoFromCSVFileAndTurnToSLL(Node *&pHead);
-bool validateUser(string username, string password, Node *pHead, Student &curStudent);
 void StudentLoginSection();
-void displayStudentInfo(Student curStudent, Node *pStudentSLL, string classAddress);
-void changePassword(Student &curStudent);
-void updatePasswordChangeToCSVFile(Student curStudent, Node *&pStudentSLL, string classAddress);
+void displayStudentInfo(string classAddress);
+void changePassword();
+void updatePasswordChangeToCSVFile(string classAddress);
 void ExtractStudentInClass(Node *&pHead, string schoolYear, string className);
-void writeCSVFile(Node *pStudentSLL, string classAddress);
+void writeCSVFile(string classAddress);
 
-void findStudentInAClass(Node *&pHead, string curID, string address, bool &isStudentExist, Student &student, string password);
-bool findStudentWithID(string ID, Student &student, Node *&pHead, string &classAddress,string password);
+void findStudentInAClass(string curID, string address, bool &isStudentExist, string password);
+bool findStudentWithID(string ID, string &classAddress, string password);
 
 // staff
 void AcademicStaffLoginSection();

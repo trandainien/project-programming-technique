@@ -44,7 +44,7 @@ void loginSection()
     }
 }
 
-bool findStudentWithID(string ID, Student &student, Node *&pHead, string &classAddress, string password)
+bool findStudentWithID(string ID, string &classAddress, string password)
 {
     string address = "School years\\"; // final goal is to find the class where this student are in
 
@@ -88,10 +88,10 @@ bool findStudentWithID(string ID, Student &student, Node *&pHead, string &classA
         {
             string className = classNames[i];
 
-            pHead = nullptr;
+            studentListHead = nullptr;
             classAddress = address + "\\" + className + ".csv";
             // cout << classAddress << endl;
-            findStudentInAClass(pHead, ID, classAddress, isStudentExist, student, password);
+            findStudentInAClass(ID, classAddress, isStudentExist, password);
 
             if (isStudentExist)
             {
@@ -106,14 +106,14 @@ bool findStudentWithID(string ID, Student &student, Node *&pHead, string &classA
     // return the info of that student, and the address of that class, and SLL of that class
 }
 
-void findStudentInAClass(Node *&pHead, string curID, string address, bool &isStudentExist, Student &student, string password)
+void findStudentInAClass(string curID, string address, bool &isStudentExist, string password)
 {
     bool isFind = false;
     ifstream input;
     address = ".\\inputs\\" + address;
     input.open(address);
 
-    Node *pCur = pHead;
+    Node *pCur = studentListHead;
 
     string temp;
     getline(input, temp);
@@ -132,7 +132,6 @@ void findStudentInAClass(Node *&pHead, string curID, string address, bool &isStu
 
         if (no == "")
         {
-
             return;
         }
 
@@ -141,19 +140,19 @@ void findStudentInAClass(Node *&pHead, string curID, string address, bool &isStu
             isStudentExist = true;
         }
 
-        if (!pHead)
+        if (!studentListHead)
         {
-            pHead = new Node;
-            pHead->student.no = no;
-            pHead->student.ID = ID;
-            pHead->student.LastName = LastName;
-            pHead->student.FirstName = FirstName;
-            pHead->student.Gender = Gender;
-            pHead->student.DateOfBirth = DateOfBirth;
-            pHead->student.SocialID = SocialID;
-            pHead->student.Password = Password;
-            pHead->next = nullptr;
-            pCur = pHead;
+            studentListHead = new Node;
+            studentListHead->student.no = no;
+            studentListHead->student.ID = ID;
+            studentListHead->student.LastName = LastName;
+            studentListHead->student.FirstName = FirstName;
+            studentListHead->student.Gender = Gender;
+            studentListHead->student.DateOfBirth = DateOfBirth;
+            studentListHead->student.SocialID = SocialID;
+            studentListHead->student.Password = Password;
+            studentListHead->next = nullptr;
+            pCur = studentListHead;
         }
         else
         {
@@ -194,11 +193,11 @@ void StudentLoginSection()
     cout << "Enter Your Password: ";
     cin >> password;
 
-    bool ok = findStudentWithID(username, student, studentListHead, classAddress, password);
+    bool ok = findStudentWithID(username, classAddress, password);
 
     if (ok)
     {
-        displayStudentInfo(student, studentListHead, classAddress);
+        displayStudentInfo(classAddress);
     }
     else
     {
@@ -625,90 +624,22 @@ void ExtractStudentInClass(Node *&pHead, string schoolYear, string className)
 }
 
 // need to fix
-void ExtractStudentInfoFromCSVFileAndTurnToSLL(Node *&pHead)
-{
-    ifstream input;
-    input.open("./inputs/Students List.csv");
-    string temp;
-    getline(input, temp); // ignore the first row of the sheet(title row)
 
-    Node *pCur = pHead;
-
-    while (!input.eof())
-    {
-        string no, ID, LastName, FirstName, Password, Gender;
-        getline(input, no, ',');
-        getline(input, ID, ',');
-        getline(input, LastName, ',');
-        getline(input, FirstName, ',');
-        getline(input, Password, ',');
-        getline(input, Gender);
-
-        if (no == "")
-            return;
-
-        if (!pHead)
-        {
-            pHead = new Node;
-            pHead->student.no = no;
-            pHead->student.ID = ID;
-            pHead->student.LastName = LastName;
-            pHead->student.FirstName = FirstName;
-
-            pHead->student.Password = Password;
-            pHead->student.Gender = Gender;
-
-            pHead->next = nullptr;
-            pCur = pHead;
-        }
-        else
-        {
-            pCur->next = new Node;
-            pCur = pCur->next;
-            pCur->student.no = no;
-            pCur->student.ID = ID;
-            pCur->student.LastName = LastName;
-            pCur->student.FirstName = FirstName;
-
-            pCur->student.Password = Password;
-            pCur->student.Gender = Gender;
-
-            pCur->next = nullptr;
-        }
-    }
-    input.close();
-}
-
-bool validateUser(string username, string password, Node *pHead, Student &curStudent)
-{
-    // send list of user in here and take the username and password of each node
-    while (pHead)
-    {
-        if (pHead->student.ID == username && pHead->student.Password == password)
-        {
-            curStudent = pHead->student;
-            return true;
-        }
-        pHead = pHead->next;
-    }
-    return false;
-}
-
-void displayStudentInfo(Student curStudent, Node *pStudentSLL, string classAddress)
+void displayStudentInfo(string classAddress)
 {
     system("CLS");
     int n;
 
-    cout << "No: " << curStudent.no << endl;
-    cout << "ID: " << curStudent.ID << endl;
-    cout << "Fullname: " << curStudent.LastName << ' ' << curStudent.FirstName << ' ' << endl;
-    cout << "Date Of Birth: " << curStudent.DateOfBirth << endl;
-    cout << "Gender: " << curStudent.Gender << endl;
-    cout << "Social ID: " << curStudent.SocialID << endl;
+    cout << "No: " << student.no << endl;
+    cout << "ID: " << student.ID << endl;
+    cout << "Fullname: " << student.LastName << ' ' << student.FirstName << ' ' << endl;
+    cout << "Date Of Birth: " << student.DateOfBirth << endl;
+    cout << "Gender: " << student.Gender << endl;
+    cout << "Social ID: " << student.SocialID << endl;
     cout << "--------------------------------------------------------------------" << endl;
 
-    cout << "Username: " << curStudent.ID << endl;
-    cout << "Password: " << curStudent.Password << endl;
+    cout << "Username: " << student.ID << endl;
+    cout << "Password: " << student.Password << endl;
 
     cout << endl;
     cout << "1. Log out" << endl;
@@ -722,34 +653,34 @@ void displayStudentInfo(Student curStudent, Node *pStudentSLL, string classAddre
     }
     else
     {
-        changePassword(curStudent);
-        updatePasswordChangeToCSVFile(curStudent, pStudentSLL, classAddress);
+        changePassword();
+        updatePasswordChangeToCSVFile(classAddress);
         cout << "Successfully Updated!!!" << endl;
         cout << "Hit any key to see the change.";
         getch(); // hit any key and then execute then below function
-        displayStudentInfo(curStudent, pStudentSLL, classAddress);
+        displayStudentInfo(classAddress);
     }
     // change password option.
     // log out option
 }
 
-void changePassword(Student &curStudent)
+void changePassword()
 {
     string newPass;
     cout << "Your new Password: ";
     cin >> newPass;
-    curStudent.Password = newPass;
+    student.Password = newPass;
 }
 
-void updatePasswordChangeToCSVFile(Student curStudent, Node *&pStudentSLL, string classAddress)
+void updatePasswordChangeToCSVFile(string classAddress)
 {
 
-    Node *pCur = pStudentSLL;
+    Node *pCur = studentListHead;
     while (pCur)
     {
-        if (pCur->student.ID == curStudent.ID)
+        if (pCur->student.ID == student.ID)
         {
-            pCur->student.Password = curStudent.Password;
+            pCur->student.Password = student.Password;
         }
         pCur = pCur->next;
     }
@@ -762,10 +693,10 @@ void updatePasswordChangeToCSVFile(Student curStudent, Node *&pStudentSLL, strin
 
     // delete pCur->next;
     // pCur->next = nullptr;
-    writeCSVFile(pStudentSLL, classAddress);
+    writeCSVFile(classAddress);
 }
 
-void writeCSVFile(Node *pStudentSLL, string classAddress)
+void writeCSVFile(string classAddress)
 {
     ofstream output;
     classAddress = ".\\inputs\\" + classAddress;
@@ -773,17 +704,18 @@ void writeCSVFile(Node *pStudentSLL, string classAddress)
     output.open(classAddress);
     output << "No ,ID,Lastname,Firstname,Gender,Date Of Birth,Social ID,Password" << endl;
 
-    while (pStudentSLL)
+    Node *pCur = studentListHead;
+    while (pCur)
     {
-        output << pStudentSLL->student.no << ',';
-        output << pStudentSLL->student.ID << ',';
-        output << pStudentSLL->student.LastName << ',';
-        output << pStudentSLL->student.FirstName << ',';
-        output << pStudentSLL->student.Gender << ',';
-        output << pStudentSLL->student.DateOfBirth << ',';
-        output << pStudentSLL->student.SocialID << ',';
-        output << pStudentSLL->student.Password << endl;
-        pStudentSLL = pStudentSLL->next;
+        output << pCur->student.no << ',';
+        output << pCur->student.ID << ',';
+        output << pCur->student.LastName << ',';
+        output << pCur->student.FirstName << ',';
+        output << pCur->student.Gender << ',';
+        output << pCur->student.DateOfBirth << ',';
+        output << pCur->student.SocialID << ',';
+        output << pCur->student.Password << endl;
+        pCur = pCur->next;
     }
 
     output.close();
