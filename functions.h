@@ -26,6 +26,17 @@ struct Node
     Node *next;
 };
 
+struct Staff
+{
+    string no, ID, LastName, FirstName, Gender, Email, Password;
+};
+
+struct StaffList
+{
+    Staff staff;
+    StaffList *next;
+};
+
 void start();
 void ExtractStudentInfoFromCSVFileAndTurnToSLL(Node *&pHead);
 void openCSVFileFromUserInput();
@@ -41,3 +52,12 @@ void changePassword(Student &curStudent);
 void createNewDirectory();
 void ListAllFileNames(string address, bool isFile);
 string removeType(string s);
+
+void inputCourse();
+
+void StaffMenu(Staff staff);
+void viewStaffPersonalInfo(Staff staff, StaffList *&pHead);
+bool validateStaff(string username, string password, StaffList *pHead, Staff &staff);
+void ExtractStaffInfoAndTurnToSLL(StaffList *&pHead);
+void writeChangesToStaffCSV(StaffList *pHead);
+void changeStaffPassword(Staff &staff, StaffList *&pHead);

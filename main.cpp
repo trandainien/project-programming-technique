@@ -2,11 +2,9 @@
 
 int main()
 {
-    // start();
+    start();
 
     // test
-
-    ListAllFileNames("2021 - 2022", true);
 }
 
 // remind:

@@ -1,4 +1,4 @@
-No ,ID,Last name,Full name,Username,Password,Gender,Email,class
-1,21127664,Tran Dai,Nien,dainien521,abcde123,Male,tdnien@gmail.com,21CLC09
-2,21100000,Tran Kim,Loan,loan,123,Female,loan@gmail.com,21CLC09
-3,20000000,Tran Thi,Hang,hang,12,Female,hang@gmail.com,21CLC08
+No ,ID,Lastname,Firstname,Password,Gender,Email,class
+1,21127664,Tran Dai,Nien,1234,Male,tdnien@gmail.com,21CLC09
+2,21100000,Tran Kim,Loan,1234,Female,loan@gmail.com,21CLC09
+3,20000000,Tran Thi,Hang,123,Female,hang@gmail.com,21CLC08

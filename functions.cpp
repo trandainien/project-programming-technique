@@ -76,6 +76,119 @@ void StudentLoginSection(Node *pStudentSLL)
     }
 }
 
+void StaffMenu(Staff staff, StaffList *&pHead)
+{
+    int n;
+
+    system("CLS");
+
+    cout << "***------------------      Welcome to Academic Staff Menu    ----------------***" << endl;
+    cout << "1. View personal information" << endl;
+    cout << "2. Create new School year" << endl;
+    cout << "3. Log out" << endl;
+    cout << "Your option: ";
+    cin >> n;
+
+    if (n == 1)
+    {
+        viewStaffPersonalInfo(staff, pHead);
+    }
+    else
+    {
+        if (n == 2)
+        {
+        }
+        else
+        {
+            loginSection();
+        }
+    }
+}
+
+void viewStaffPersonalInfo(Staff staff, StaffList *&pHead)
+{
+    int n;
+
+    system("CLS");
+
+    cout << "***------------------      Welcome to Academic Staff Personal Info    ----------------***" << endl;
+    cout << "ID: " << staff.ID << endl;
+    cout << "Fullname: " << staff.LastName << ' ' << staff.FirstName << endl;
+    cout << "Gender: " << staff.Gender << endl;
+    cout << "Password: " << staff.Password << endl;
+    cout << endl;
+    cout << "1. Change Password" << endl;
+    cout << "2. Log out" << endl;
+    cout << "3. Back to Staff Menu" << endl;
+    cout << "Your Option: ";
+    cin >> n;
+
+    if (n == 1)
+    {
+        changeStaffPassword(staff, pHead);
+    }
+    else
+    {
+        if (n == 2)
+        {
+            loginSection();
+        }
+        else
+        {
+            StaffMenu(staff, pHead);
+        }
+    }
+}
+
+void changeStaffPassword(Staff &staff, StaffList *&pHead)
+{
+    string newPass;
+    cout << "New password: ";
+    cin >> newPass;
+
+    staff.Password = newPass;
+
+    StaffList *pCur = pHead;
+    while (pCur)
+    {
+        if (pCur->staff.ID == staff.ID)
+        {
+            pCur->staff.Password = staff.Password;
+            break;
+        }
+        pCur = pCur->next;
+    }
+
+    writeChangesToStaffCSV(pHead);
+
+    cout << "Your password has been updated. Click anything to see the changes...";
+    getch();
+    viewStaffPersonalInfo(staff, pHead);
+}
+
+void writeChangesToStaffCSV(StaffList *pHead)
+{
+    ofstream output;
+    output.open("./inputs/Staff List.csv");
+    output << "No ,ID,Lastname,Firstname,Gender,Email,Password" << endl;
+
+    while (pHead)
+    {
+
+        output << pHead->staff.no << ',';
+        output << pHead->staff.ID << ',';
+        output << pHead->staff.LastName << ',';
+        output << pHead->staff.FirstName << ',';
+        output << pHead->staff.Gender << ',';
+        output << pHead->staff.Email << ',';
+        output << pHead->staff.Password << endl;
+
+        pHead = pHead->next;
+    }
+
+    output.close();
+}
+
 void AcademicStaffLoginSection()
 {
     system("CLS");
@@ -87,10 +200,107 @@ void AcademicStaffLoginSection()
     cin >> username;
     cout << "Enter Your Password: ";
     cin >> password;
+
+    StaffList *pHead = nullptr;
+    Staff staff;
+    ExtractStaffInfoAndTurnToSLL(pHead);
+
+    if (validateStaff(username, password, pHead, staff))
+    {
+        cout << "Login successful!!!" << endl;
+        cout << "Press any key to continue...";
+        getch();
+        StaffMenu(staff, pHead);
+    }
+    else
+    {
+        int n;
+        cout << "Login Unsuccessful!!! Please Try agian" << endl;
+        cout << "1. Login again" << endl;
+        cout << "2. Back to Homepage" << endl;
+        cout << "Your option: ";
+        cin >> n;
+
+        if (n == 1)
+        {
+            AcademicStaffLoginSection();
+        }
+        else
+        {
+            loginSection();
+        }
+    }
 }
 
-void ExtractStaffInfoAndTurnToSLL(Node *&pHead)
+bool validateStaff(string username, string password, StaffList *pHead, Staff &staff)
 {
+
+    while (pHead)
+    {
+        if (username == pHead->staff.ID && password == pHead->staff.Password)
+        {
+            staff = pHead->staff;
+            return true;
+        }
+        pHead = pHead->next;
+    }
+    return false;
+}
+
+void ExtractStaffInfoAndTurnToSLL(StaffList *&pHead)
+{
+    ifstream input;
+    input.open("./inputs/Staff List.csv");
+
+    StaffList *pCur = pHead;
+
+    string temp = "";
+    getline(input, temp);
+
+    while (!input.eof())
+    {
+        string no, ID, LastName, FirstName, Gender, Email, Password;
+        getline(input, no, ',');
+        getline(input, ID, ',');
+        getline(input, LastName, ',');
+        getline(input, FirstName, ',');
+
+        getline(input, Gender, ',');
+        getline(input, Email, ',');
+        getline(input, Password);
+
+        if (no == "")
+            return;
+
+        if (!pHead)
+        {
+            pHead = new StaffList;
+            pHead->staff.no = no;
+            pHead->staff.ID = ID;
+            pHead->staff.LastName = LastName;
+            pHead->staff.FirstName = FirstName;
+            pHead->staff.Gender = Gender;
+            pHead->staff.Email = Email;
+            pHead->staff.Password = Password;
+            pHead->next = nullptr;
+            pCur = pHead;
+        }
+        else
+        {
+            pCur->next = new StaffList;
+            pCur = pCur->next;
+            pCur->staff.no = no;
+            pCur->staff.ID = ID;
+            pCur->staff.LastName = LastName;
+            pCur->staff.FirstName = FirstName;
+            pCur->staff.Gender = Gender;
+            pCur->staff.Email = Email;
+            pCur->staff.Password = Password;
+            pCur->next = nullptr;
+        }
+    }
+
+    input.close();
 }
 
 void ExtractStudentInfoFromCSVFileAndTurnToSLL(Node *&pHead)
@@ -104,12 +314,12 @@ void ExtractStudentInfoFromCSVFileAndTurnToSLL(Node *&pHead)
 
     while (!input.eof())
     {
-        string no, ID, LastName, FirstName, Username, Password, Gender, Email, Class;
+        string no, ID, LastName, FirstName, Password, Gender, Email, Class;
         getline(input, no, ',');
         getline(input, ID, ',');
         getline(input, LastName, ',');
         getline(input, FirstName, ',');
-        getline(input, Username, ',');
+
         getline(input, Password, ',');
         getline(input, Gender, ',');
         getline(input, Email, ',');
@@ -125,7 +335,7 @@ void ExtractStudentInfoFromCSVFileAndTurnToSLL(Node *&pHead)
             pHead->student.ID = ID;
             pHead->student.LastName = LastName;
             pHead->student.FirstName = FirstName;
-            pHead->student.Username = Username;
+
             pHead->student.Password = Password;
             pHead->student.Gender = Gender;
             pHead->student.Email = Email;
@@ -141,7 +351,7 @@ void ExtractStudentInfoFromCSVFileAndTurnToSLL(Node *&pHead)
             pCur->student.ID = ID;
             pCur->student.LastName = LastName;
             pCur->student.FirstName = FirstName;
-            pCur->student.Username = Username;
+
             pCur->student.Password = Password;
             pCur->student.Gender = Gender;
             pCur->student.Email = Email;
@@ -156,7 +366,7 @@ bool validateUser(string username, string password, Node *pHead, Student &curStu
     // send list of user in here and take the username and password of each node
     while (pHead)
     {
-        if (pHead->student.Username == username && pHead->student.Password == password)
+        if (pHead->student.ID == username && pHead->student.Password == password)
         {
             curStudent = pHead->student;
             return true;
@@ -177,7 +387,7 @@ void displayStudentInfo(Student curStudent, Node *pStudentSLL)
     cout << "Class: " << curStudent.Class << ' ' << endl;
     cout << "--------------------------------------------------------------------" << endl;
 
-    cout << "Username: " << curStudent.Username << endl;
+    cout << "Username: " << curStudent.ID << endl;
     cout << "Password: " << curStudent.Password << endl;
 
     cout << endl;
@@ -239,7 +449,7 @@ void writeCSVFile(Node *pStudentSLL)
 {
     ofstream output;
     output.open("./inputs/Students List.csv");
-    output << "No ,ID,Last name,Full name,Username,Password,Gender,Email,class" << endl;
+    output << "No ,ID,Lastname,Firstname,Password,Gender,Email,class" << endl;
 
     while (pStudentSLL)
     {
@@ -248,7 +458,7 @@ void writeCSVFile(Node *pStudentSLL)
         output << pStudentSLL->student.ID << ',';
         output << pStudentSLL->student.LastName << ',';
         output << pStudentSLL->student.FirstName << ',';
-        output << pStudentSLL->student.Username << ',';
+
         output << pStudentSLL->student.Password << ',';
         output << pStudentSLL->student.Gender << ',';
         output << pStudentSLL->student.Email << ',';
@@ -350,4 +560,8 @@ void ListAllFileNames(string address, bool isFile)
         }
         closedir(dr);
     }
+}
+
+void inputCourse()
+{
 }
