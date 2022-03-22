@@ -562,6 +562,25 @@ void ListAllFileNames(string address, bool isFile)
     }
 }
 
-void inputCourse()
+void CreateSemester() 
 {
+    struct stat dst;
+    string s1, s2;
+    cout << "Your new semester: ";
+    getline(cin, s1);
+    cout << "School year to create: ";
+    getline (cin , s2);
+    string url = "./inputs/School years/" + s2 + "/" + s1 + "/";
+    if (stat(url.c_str(), &dst) == 0)
+    {
+        cout << "Semester existed, please try again \n";
+        CreateSemester();
+    }
+    else 
+    {
+        mkdir(url.c_str());
+        cout << "Semester has been created. \n";
+    }
 }
+
+void inputCourse() {}

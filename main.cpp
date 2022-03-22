@@ -3,7 +3,7 @@
 int main()
 {
     start();
-
+    CreateSemester();
     // test
 }
 
