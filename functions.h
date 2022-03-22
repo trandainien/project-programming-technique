@@ -7,6 +7,7 @@
 #include <dirent.h>
 #include <conio.h> //take getCh() from this library
 #include <stdio.h>
+#include <iomanip> //format into table data
 using namespace std;
 
 struct Course
@@ -17,7 +18,7 @@ struct Course
 
 struct Student
 {
-    string no, ID, LastName, FirstName, Username, Password, Gender, Email, Class;
+    string no, ID, LastName, FirstName, Gender, DateOfBirth, SocialID, Password;
 };
 
 struct Node
@@ -38,26 +39,40 @@ struct StaffList
 };
 
 void start();
-void ExtractStudentInfoFromCSVFileAndTurnToSLL(Node *&pHead);
-void openCSVFileFromUserInput();
 void loginSection();
+void openCSVFileFromUserInput();
+
+// student
 void ExtractStudentInfoFromCSVFileAndTurnToSLL(Node *&pHead);
 bool validateUser(string username, string password, Node *pHead, Student &curStudent);
-void StudentLoginSection(Node *pStudentSLL);
-void AcademicStaffLoginSection();
-void displayStudentInfo(Student curStudent, Node *pStudentSLL);
-void writeCSVFile(Node *pStudentSLL);
-void updatePasswordChangeToCSVFile(Student curStudent, Node *&pStudentSLL);
+void StudentLoginSection();
+void displayStudentInfo(Student curStudent, Node *pStudentSLL, string classAddress);
 void changePassword(Student &curStudent);
-void createNewDirectory();
-void ListAllFileNames(string address, bool isFile);
-string removeType(string s);
+void updatePasswordChangeToCSVFile(Student curStudent, Node *&pStudentSLL, string classAddress);
+void ExtractStudentInClass(Node *&pHead, string schoolYear, string className);
+void writeCSVFile(Node *pStudentSLL, string classAddress);
 
-void inputCourse();
+void findStudentInAClass(Node *&pHead, string curID, string address, bool &isStudentExist, Student &student, string password);
+bool findStudentWithID(string ID, Student &student, Node *&pHead, string &classAddress,string password);
 
-void StaffMenu(Staff staff);
+// staff
+void AcademicStaffLoginSection();
+void StaffMenu();
 void viewStaffPersonalInfo(Staff staff, StaffList *&pHead);
 bool validateStaff(string username, string password, StaffList *pHead, Staff &staff);
 void ExtractStaffInfoAndTurnToSLL(StaffList *&pHead);
 void writeChangesToStaffCSV(StaffList *pHead);
 void changeStaffPassword(Staff &staff, StaffList *&pHead);
+void viewSchoolYear();
+void viewClassesInSchoolYear(string address, string schoolYear);
+void viewStudentInClass(string address, string className, string schoolYear);
+void createNewSchoolYear();
+
+// Files
+void createNewDirectory(string url);
+void ListAllFileNames(string address, bool isFile, string arr[], int &num);
+string removeType(string s);
+
+// format
+template <class T>
+void printElement(T t, const int &width);

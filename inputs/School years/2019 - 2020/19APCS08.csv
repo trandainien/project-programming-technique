@@ -1,11 +1,4 @@
-No,ID,Last name,First name,Gender,Date of Birth ,Social ID
-1,19127440,Tran,John,Male,1/1/2003,1
-2,20127050,Tran,Peter,Male,1/2/2003,2
-3,20127082,Tran,Nana,Male,1/3/2003,3
-4,21127007,Tran,Nunu,Male,1/4/2003,4
-5,21127013,Tran,Elder,Male,1/5/2003,5
-6,21127017,Tran,Hero,Male,1/6/2003,6
-7,21127038,Tran,Justify,Male,1/7/2003,7
-8,21127055,Tran,Hihi,Male,1/8/2003,8
-9,21127063,Tran,Lala,Male,1/9/2003,9
-10,21127069,Tran,Css,Male,1/10/2003,10
+No ,ID,Lastname,Firstname,Gender,Date Of Birth,Social ID,Password
+1,19111111,Tran,Dai,Male,6/3/2003,1,1234
+2,19111112,Nien,ne ,female,6/6/2003,2,123
+3,19111113,Nana,nana,Female ,9/9/2003,3,123
