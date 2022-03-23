@@ -66,6 +66,7 @@ void viewClassesInSchoolYear(string address, string schoolYear);
 void viewStudentInClass(string address, string className, string schoolYear);
 void createNewSchoolYear();
 void viewSemesters(string address, string schoolYear);
+void viewCourse(string address, string schoolYear, string term);
 void CreateSemester(string address, string schoolYear);
 
 // Files

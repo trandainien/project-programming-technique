@@ -567,7 +567,18 @@ void viewSemesters(string address, string schoolYear)
 
     if (n >= 1 && n <= num)
     {
-        // viewCourse();
+        switch (n)
+        {
+        case 1:
+            viewCourse(address + "/Semesters/1", schoolYear, "First Term");
+            break;
+        case 2:
+            viewCourse(address + "/Semesters/2", schoolYear, "Second Term");
+            break;
+        case 3:
+            viewCourse(address + "/Semesters/3", schoolYear, "Third Term");
+            break;
+        }
     }
     else
     {
@@ -599,6 +610,42 @@ void viewSemesters(string address, string schoolYear)
                     loginSection();
                 }
             }
+        }
+    }
+}
+
+void viewCourse(string address, string schoolYear, string term)
+{
+    system("CLS");
+    cout << "***------------------   Courses in " << term << " of " << schoolYear << " ----------------***" << endl;
+    string nameCourses[100];
+    int num = 0;
+    int n;
+
+    ListAllFileNames(address, false, nameCourses, num);
+
+    for (int i = 0; i < num; i++)
+    {
+        cout << i + 1 << ". " << nameCourses[i] << endl;
+    }
+    cout << endl;
+
+    cout << num + 1 << ". Create new Course" << endl; // write another csv file for info.
+    cout << num + 2 << ". Back to the semesters section" << endl;
+    cout << "Your option: ";
+    cin >> n;
+
+    if (n >= 1 && n <= num)
+    {
+    }
+    else
+    {
+        if (n == num + 1)
+        {
+        }
+        else
+        {
+            viewSemesters("School years/" + schoolYear, schoolYear);
         }
     }
 }
