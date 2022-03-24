@@ -2,9 +2,9 @@
 
 int main()
 {
-    start();
-
+     start();
+   
     // test
 }
 
-// remind
+// remindfunctions.cpp: In function 'std::__cxx11::string getDay(std::__cxx11::string)':

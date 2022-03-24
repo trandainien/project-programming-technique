@@ -41,9 +41,10 @@ struct Date
 
 struct Course
 {
-    string id, name, teacherName, max, s1Time, s1Date, s2Time, s2Date;
+    string id, name, teacherName, s1Time, s1Date, s2Time, s2Date;
     Date startDate, endDate;
-    int numberOfCredits = 50;
+    string max = "50";
+    string numberOfCredits;
 };
 
 struct CourseList
@@ -87,6 +88,10 @@ bool checkDay(string day);
 bool checkTime(string time);
 bool checkdate(int d, int m, int y);
 void viewCourseInfo(string address, string schoolYear, string term, string nameCourse);
+int turnToInt(char c);
+void TurnDate(string date, int &y, int &m, int &d);
+string getTime(string time);
+string getDay(string day);
 
 // Files
 void createNewDirectory(string url);

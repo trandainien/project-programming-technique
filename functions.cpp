@@ -657,8 +657,130 @@ void viewCourseInfo(string address, string schoolYear, string term, string nameC
     // open specific file with path
 
     cout << address;
-    // ifstream input;
-    // input.open(".\\inputs\\School years\\" + schoolYear + "\\");
+    ifstream input;
+    input.open(".\\inputs\\" + address + "\\" + nameCourse + "\\Course Info.csv");
+
+    Course course;
+    string temp = "";
+    cin.ignore();
+    getline(input, temp, ',');
+    getline(input, course.id);
+    getline(input, temp, ',');
+    getline(input, course.name);
+    getline(input, temp, ',');
+    getline(input, course.teacherName);
+    getline(input, temp, ',');
+    getline(input, course.numberOfCredits);
+    getline(input, temp, ',');
+    getline(input, course.max);
+    getline(input, temp, ',');
+    getline(input, course.s1Time);
+    getline(input, temp, ',');
+    getline(input, course.s1Date);
+    getline(input, temp, ',');
+    getline(input, course.s2Time);
+    getline(input, temp, ',');
+    getline(input, course.s2Date);
+    getline(input, temp, ',');
+    getline(input, temp, ',');
+    TurnDate(temp, course.startDate.year, course.startDate.month, course.startDate.day);
+    getline(input, temp);
+    TurnDate(temp, course.endDate.year, course.endDate.month, course.endDate.day);
+
+    system("CLS");
+    // cout << ".\\inputs\\" + address + "\\" + nameCourse + "\\Course Info " << endl;
+    cout << "***------------------   " + nameCourse + " Course Info ----------------***" << endl;
+    cout << "Course Registration Date: " << course.startDate.day << "/" << course.startDate.month << "/" << course.startDate.year << " - " << course.endDate.day << "/" << course.endDate.month << "/" << course.endDate.year << endl;
+    cout << endl;
+    cout << "ID: " << course.id << endl;
+    cout << "Name: " << course.name << endl;
+    cout << "Teacher name: " << course.teacherName << endl;
+    cout << "Number of Credits: " << course.numberOfCredits << endl;
+    cout << "Max student in this course: " << course.max << endl;
+    cout << "Session 1: " << endl;
+    cout << "Time: " << getTime(course.s1Time) << endl;
+    cout << "Day: " << getDay(course.s1Date) << endl;
+    cout << "Session 2: " << endl;
+    cout << "Time: " << getTime(course.s2Time) << endl;
+    cout << "Day: " << getDay(course.s2Date) << endl;
+    cout << endl;
+
+    // update course
+    // delete course
+    // back to the view course
+}
+
+string getTime(string time)
+{
+
+    if (time == "S1")
+        return "7:30";
+    if (time == "S2")
+        return "9:30";
+    if (time == "S3")
+        return "13:30";
+    if (time == "S4")
+        return "15:30";
+    return "";
+}
+string getDay(string day)
+{
+    if (day == "MON")
+        return "Monday";
+    if (day == "TUE")
+        return "Tuesday";
+    if (day == "WED")
+        return "Wednesday";
+    if (day == "THU")
+        return "Thursday";
+    if (day == "FRI")
+        return "Friday";
+    if (day == "SAT")
+        return "Saturday";
+    return "";
+}
+
+int turnToInt(char c)
+{
+    return (int)c - 48;
+}
+
+void TurnDate(string date, int &y, int &m, int &d)
+{
+    int count = 1;
+    int dem = 0;
+    int tmp = 0;
+
+    for (int i = date.length() - 1; i >= 0; i--)
+    {
+        if (date[i] == '/')
+        {
+
+            if (dem == 0)
+            {
+                y = tmp;
+            }
+            else
+            {
+                if (dem == 1)
+                {
+                    m = tmp;
+                }
+                else
+                {
+                    d = tmp;
+                }
+            }
+            dem++;
+            tmp = 0;
+            count = 1;
+            continue;
+        }
+        tmp += count * turnToInt(date[i]);
+
+        count *= 10;
+    }
+    d = tmp;
 }
 
 void createNewCourse(string address, string schoolYear, string term)

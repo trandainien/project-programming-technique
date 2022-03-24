@@ -1,10 +1,10 @@
 ID,BAA00101,
-Name,Philosophy,
-Teacher Name,Ngo Tuan Phuong,
-Number Of Credits,2,
-Max,80,
-S1 time,S3,
-S1 date,THU,
-S2 time,S4,
-S2 date,FRI,
+Name,Philosophy
+Teacher Name,Ngo Tuan Phuong
+Number Of Credits,2
+Max,80
+S1 time,S3
+S1 date,THU
+S2 time,S4
+S2 date,FRI
 Registration Date,10/1/2020,14/1/2020
