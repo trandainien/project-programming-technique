@@ -1,9 +1,10 @@
-ID,MTH10000
-Name,Calculus
-Teacher Name,Ly Kim Ha
-Number Of Credits,3
-Max,60
-S1 time,S1
-S1 date,MON
-S2 time,S2
-S2 date,TUE
+ID,MTH10000,
+Name,Calculus,
+Teacher Name,Ly Kim Ha,
+Number Of Credits,3,
+Max,60,
+S1 time,S1,
+S1 date,MON,
+S2 time,S2,
+S2 date,TUE,
+Registration Date,1/1/2020,14/1/2020

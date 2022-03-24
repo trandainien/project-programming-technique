@@ -637,17 +637,212 @@ void viewCourse(string address, string schoolYear, string term)
 
     if (n >= 1 && n <= num)
     {
+        viewCourseInfo(address, schoolYear, term, nameCourses[n - 1]);
     }
     else
     {
         if (n == num + 1)
         {
+            createNewCourse(address, schoolYear, term);
         }
         else
         {
             viewSemesters("School years/" + schoolYear, schoolYear);
         }
     }
+}
+
+void viewCourseInfo(string address, string schoolYear, string term, string nameCourse)
+{
+    // open specific file with path
+
+    cout << address;
+    // ifstream input;
+    // input.open(".\\inputs\\School years\\" + schoolYear + "\\");
+}
+
+void createNewCourse(string address, string schoolYear, string term)
+{
+    // create new folder with a new of a course
+    // user input course info, we write in in course info.csv file
+    // create student score file csv then write title first and
+    Course newCourse;
+    int d, m, y;
+    system("CLS");
+
+    cout << "***------------------  Create new course ----------------***" << endl;
+
+    cout << "Registration Date: " << endl;
+    cout << "Start date: " << endl;
+    cout << "Day: ";
+    cin >> d;
+    cout << "Month: ";
+    cin >> m;
+    cout << "Year: ";
+    cin >> y;
+
+    while (!checkdate(d, m, y))
+    {
+        cout << "Your input is invalid. Please type again!!!" << endl;
+        cout << "Day: ";
+        cin >> d;
+        cout << "Month: ";
+        cin >> m;
+        cout << "Year: ";
+        cin >> y;
+        cout << endl;
+    }
+
+    newCourse.startDate.day = d;
+    newCourse.startDate.month = m;
+    newCourse.startDate.year = y;
+    cout << "End date: " << endl;
+    cout << "Day: ";
+    cin >> d;
+    cout << "Month: ";
+    cin >> m;
+    cout << "Year: ";
+    cin >> y;
+    while (!checkdate(d, m, y))
+    {
+        cout << "Your input is invalid. Please type again!!!" << endl;
+        cout << "Day: ";
+        cin >> d;
+        cout << "Month: ";
+        cin >> m;
+        cout << "Year: ";
+        cin >> y;
+        cout << endl;
+    }
+
+    newCourse.endDate.day = d;
+    newCourse.endDate.month = m;
+    newCourse.endDate.year = y;
+
+    cout << endl;
+    cout << "Course ID: ";
+    cin >> newCourse.id;
+    cout << "Course name: ";
+    cin >> newCourse.name;
+    cout << "Course teacher name: ";
+    cin.ignore();
+    getline(cin, newCourse.teacherName);
+    cout << "Number of Credits: ";
+    cin >> newCourse.numberOfCredits;
+    cout << "Max student in a course: ";
+    cin >> newCourse.max;
+
+    cout << "Session 1: " << endl;
+    cout << "Date(MON/TUE/WED...): ";
+    cin >> newCourse.s1Date;
+    while (!checkDay(newCourse.s1Date))
+    {
+        cout << "Your input is invalid. Please type again, example: MON." << endl;
+        cout << "Your input: ";
+        cin >> newCourse.s1Date;
+        cout << endl;
+    }
+    cout << "Time(S1,S2,S3,S4): ";
+    cin >> newCourse.s1Time;
+    while (!checkTime(newCourse.s1Time))
+    {
+        cout << "Your input is invalid. Please type again, example: S1" << endl;
+        cout << "Your input : ";
+        cin >> newCourse.s1Time;
+
+        cout << endl;
+    }
+    cout << "Session 2: " << endl;
+    cout << "Date(MON/TUE/WED...): ";
+    cin >> newCourse.s2Date;
+    while (!checkDay(newCourse.s2Date))
+    {
+        cout << "Your input is invalid. Please type again, example: MON." << endl;
+        cout << "Your input: ";
+        cin >> newCourse.s2Date;
+        cout << endl;
+    }
+    cout << "Time(S1,S2,S3,S4): ";
+    cin >> newCourse.s2Time;
+    while (!checkTime(newCourse.s2Time))
+    {
+        cout << "Your input is invalid. Please type again, example: S1" << endl;
+        cout << "Your input : ";
+        cin >> newCourse.s2Time;
+
+        cout << endl;
+    }
+    createNewDirectory(".\\inputs\\" + address + "\\" + newCourse.name);
+
+    string path = ".\\inputs\\" + address + "\\" + newCourse.name + "\\Course Info.csv";
+    ofstream file(path);
+    // write title in csv fileName
+    file << "ID"
+         << "," << newCourse.id << endl;
+    file << "Name"
+         << "," << newCourse.name << endl;
+    file << "Teacher Name"
+         << "," << newCourse.teacherName << endl;
+    file << "Number of Credits"
+         << "," << newCourse.numberOfCredits << endl;
+    file << "Max"
+         << "," << newCourse.max << endl;
+    file << "S1 time"
+         << "," << newCourse.s1Time << endl;
+    file << "S1 date"
+         << "," << newCourse.s1Date << endl;
+    file << "S2 time"
+         << "," << newCourse.s2Time << endl;
+    file << "S2 date"
+         << "," << newCourse.s2Date << endl;
+    file << "Registration Date"
+         << "," << newCourse.startDate.day << "/" << newCourse.startDate.month << "/" << newCourse.startDate.year << "," << newCourse.endDate.day << "/" << newCourse.endDate.month << "/" << newCourse.endDate.year << endl;
+    path = ".\\inputs\\" + address + "\\" + newCourse.name + "\\Student Score Board.csv";
+    ofstream file1(path);
+
+    file1 << "No,Student ID,Lastname,Firstname, Homework, Midterm Mark, Final Mark, TotalMark" << endl;
+
+    cout << endl;
+    cout << "Please check the info again and hit any key to continue...";
+    getch();
+
+    viewCourse(address, schoolYear, term);
+}
+
+bool checkDay(string day)
+{
+    if (day == "MON" || day == "TUE" || day == "WED" || day == "THU" || day == "FRI" || day == "SAT")
+        return true;
+    return false;
+}
+
+bool checkTime(string time)
+{
+    if (time == "S1" || time == "S2" || time == "S3" || time == "S4")
+        return true;
+    return false;
+}
+
+bool checkdate(int m, int d, int y)
+{
+    if (!(1 <= m && m <= 12))
+        return false;
+    if (!(1 <= d && d <= 31))
+        return false;
+    if ((d == 31) && (m == 2 || m == 4 || m == 6 || m == 9 || m == 11))
+        return false;
+    if ((d == 30) && (m == 2))
+        return false;
+    if ((m == 2) && (d == 29) && (y % 4 != 0))
+        return false;
+    if ((m == 2) && (d == 29) && (y % 400 == 0))
+        return true;
+    if ((m == 2) && (d == 29) && (y % 100 == 0))
+        return false;
+    if ((m == 2) && (d == 29) && (y % 4 == 0))
+        return true;
+
+    return true;
 }
 
 void viewStudentInClass(string address, string className, string schoolYear)

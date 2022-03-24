@@ -1,9 +1,10 @@
-ID,PHY00001
-Name,Physics
-Teacher Name,Ton Nu Quynh Trang
-Number Of Credits,2
-Max,85
-S1 time,S1
-S1 date,MON
-S2 time,S3
-S2 date,WED
+ID,PHY00001,
+Name,Physics,
+Teacher Name,Ton Nu Quynh Trang,
+Number Of Credits,2,
+Max,85,
+S1 time,S1,
+S1 date,MON,
+S2 time,S3,
+S2 date,WED,
+Registration Date,10/1/2020,14/1/2020

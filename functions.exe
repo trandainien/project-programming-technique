@@ -37391,12 +37391,6 @@ namespace std
 # 11 "C:\\Users\\Nien\\Desktop\\Project\\functions.h"
 using namespace std;
 
-struct Course
-{
-    string StartDate, EndDate, ID, Name, TeacherName, Day1, Day2, Time1, Time2;
-    int NumberOfCredits, MaxNumOfStudent;
-};
-
 struct Student
 {
     string no, ID, LastName, FirstName, Gender, DateOfBirth, SocialID, Password;
@@ -37419,22 +37413,32 @@ struct StaffList
     StaffList *next;
 };
 
+struct Course
+{
+    string id, name, teacherName, max, s1Time, s1Date, s2Time, s2Date, startDate, endDate;
+    int numberOfCredits = 50;
+};
+
+struct CourseList
+{
+    Course course;
+    CourseList *next;
+};
+
 void start();
 void loginSection();
 void openCSVFileFromUserInput();
 
 
-void ExtractStudentInfoFromCSVFileAndTurnToSLL(Node *&pHead);
-bool validateUser(string username, string password, Node *pHead, Student &curStudent);
 void StudentLoginSection();
-void displayStudentInfo(Student curStudent, Node *pStudentSLL, string classAddress);
-void changePassword(Student &curStudent);
-void updatePasswordChangeToCSVFile(Student curStudent, Node *&pStudentSLL, string classAddress);
+void displayStudentInfo(string classAddress);
+void changePassword();
+void updatePasswordChangeToCSVFile(string classAddress);
 void ExtractStudentInClass(Node *&pHead, string schoolYear, string className);
-void writeCSVFile(Node *pStudentSLL, string classAddress);
+void writeCSVFile(string classAddress);
 
-void findStudentInAClass(Node *&pHead, string curID, string address, bool &isStudentExist, Student &student, string password);
-bool findStudentWithID(string ID, Student &student, Node *&pHead, string &classAddress,string password);
+void findStudentInAClass(string curID, string address, bool &isStudentExist, string password);
+bool findStudentWithID(string ID, string &classAddress, string password);
 
 
 void AcademicStaffLoginSection();
@@ -37448,6 +37452,10 @@ void viewSchoolYear();
 void viewClassesInSchoolYear(string address, string schoolYear);
 void viewStudentInClass(string address, string className, string schoolYear);
 void createNewSchoolYear();
+void viewSemesters(string address, string schoolYear);
+void viewCourse(string address, string schoolYear, string term);
+void CreateSemester(string address, string schoolYear);
+void createNewCourse(string address);
 
 
 void createNewDirectory(string url);
@@ -37503,7 +37511,7 @@ void loginSection()
     }
 }
 
-bool findStudentWithID(string ID, Student &student, Node *&pHead, string &classAddress, string password)
+bool findStudentWithID(string ID, string &classAddress, string password)
 {
     string address = "School years\\";
 
@@ -37547,10 +37555,10 @@ bool findStudentWithID(string ID, Student &student, Node *&pHead, string &classA
         {
             string className = classNames[i];
 
-            pHead = nullptr;
+            studentListHead = nullptr;
             classAddress = address + "\\" + className + ".csv";
 
-            findStudentInAClass(pHead, ID, classAddress, isStudentExist, student, password);
+            findStudentInAClass(ID, classAddress, isStudentExist, password);
 
             if (isStudentExist)
             {
@@ -37565,14 +37573,14 @@ bool findStudentWithID(string ID, Student &student, Node *&pHead, string &classA
 
 }
 
-void findStudentInAClass(Node *&pHead, string curID, string address, bool &isStudentExist, Student &student, string password)
+void findStudentInAClass(string curID, string address, bool &isStudentExist, string password)
 {
     bool isFind = false;
     ifstream input;
     address = ".\\inputs\\" + address;
     input.open(address);
 
-    Node *pCur = pHead;
+    Node *pCur = studentListHead;
 
     string temp;
     getline(input, temp);
@@ -37591,7 +37599,6 @@ void findStudentInAClass(Node *&pHead, string curID, string address, bool &isStu
 
         if (no == "")
         {
-
             return;
         }
 
@@ -37600,19 +37607,19 @@ void findStudentInAClass(Node *&pHead, string curID, string address, bool &isStu
             isStudentExist = true;
         }
 
-        if (!pHead)
+        if (!studentListHead)
         {
-            pHead = new Node;
-            pHead->student.no = no;
-            pHead->student.ID = ID;
-            pHead->student.LastName = LastName;
-            pHead->student.FirstName = FirstName;
-            pHead->student.Gender = Gender;
-            pHead->student.DateOfBirth = DateOfBirth;
-            pHead->student.SocialID = SocialID;
-            pHead->student.Password = Password;
-            pHead->next = nullptr;
-            pCur = pHead;
+            studentListHead = new Node;
+            studentListHead->student.no = no;
+            studentListHead->student.ID = ID;
+            studentListHead->student.LastName = LastName;
+            studentListHead->student.FirstName = FirstName;
+            studentListHead->student.Gender = Gender;
+            studentListHead->student.DateOfBirth = DateOfBirth;
+            studentListHead->student.SocialID = SocialID;
+            studentListHead->student.Password = Password;
+            studentListHead->next = nullptr;
+            pCur = studentListHead;
         }
         else
         {
@@ -37653,11 +37660,11 @@ void StudentLoginSection()
     cout << "Enter Your Password: ";
     cin >> password;
 
-    bool ok = findStudentWithID(username, student, studentListHead, classAddress, password);
+    bool ok = findStudentWithID(username, classAddress, password);
 
     if (ok)
     {
-        displayStudentInfo(student, studentListHead, classAddress);
+        displayStudentInfo(classAddress);
     }
     else
     {
@@ -37938,6 +37945,7 @@ void viewSchoolYear()
     {
         if (n == num + 1)
         {
+            createNewSchoolYear();
         }
         else
         {
@@ -37963,7 +37971,8 @@ void viewClassesInSchoolYear(string address, string schoolYear)
     cout << endl;
 
     cout << num + 1 << ". Back to the School Years" << endl;
-    cout << num + 2 << ". Log out" << endl;
+    cout << num + 2 << ". Semesters" << endl;
+    cout << num + 3 << ". Log out" << endl;
     cout << "Your option: ";
     cin >> n;
 
@@ -37979,9 +37988,207 @@ void viewClassesInSchoolYear(string address, string schoolYear)
         }
         else
         {
-            loginSection();
+            if (n == num + 3)
+            {
+                loginSection();
+            }
+            else
+            {
+                viewSemesters(address, schoolYear);
+            }
         }
     }
+}
+
+void viewSemesters(string address, string schoolYear)
+{
+    system("CLS");
+
+    cout << "***------------------   Semesters in " << schoolYear << " ----------------***" << endl;
+
+    string semesters[100];
+    int num = 0;
+    int n;
+
+    ListAllFileNames(address + "/Semesters", false, semesters, num);
+    for (int i = 0; i < num; i++)
+    {
+        cout << i + 1 << ". " << semesters[i] << endl;
+    }
+    cout << endl;
+    if (num >= 3)
+    {
+        cout << num + 1 << ". Back to School years " << endl;
+        cout << num + 2 << ". Log out" << endl;
+        cout << "Your option: ";
+        cin >> n;
+    }
+    else
+    {
+        cout << num + 1 << ". Create new Semester" << endl;
+        cout << num + 2 << ". Back to School years " << endl;
+        cout << num + 3 << ". Log out" << endl;
+        cout << "Your option: ";
+        cin >> n;
+    }
+
+    if (n >= 1 && n <= num)
+    {
+        switch (n)
+        {
+        case 1:
+            viewCourse(address + "/Semesters/1", schoolYear, "First Term");
+            break;
+        case 2:
+            viewCourse(address + "/Semesters/2", schoolYear, "Second Term");
+            break;
+        case 3:
+            viewCourse(address + "/Semesters/3", schoolYear, "Third Term");
+            break;
+        }
+    }
+    else
+    {
+        if (num >= 3)
+        {
+            if (n == num + 1)
+            {
+                viewSchoolYear();
+            }
+            else
+            {
+                loginSection();
+            }
+        }
+        else
+        {
+            if (n == num + 1)
+            {
+                CreateSemester(address, schoolYear);
+            }
+            else
+            {
+                if (n == num + 2)
+                {
+                    viewSchoolYear();
+                }
+                else
+                {
+                    loginSection();
+                }
+            }
+        }
+    }
+}
+
+void viewCourse(string address, string schoolYear, string term)
+{
+    system("CLS");
+    cout << "***------------------   Courses in " << term << " of " << schoolYear << " ----------------***" << endl;
+    string nameCourses[100];
+    int num = 0;
+    int n;
+
+    ListAllFileNames(address, false, nameCourses, num);
+
+    for (int i = 0; i < num; i++)
+    {
+        cout << i + 1 << ". " << nameCourses[i] << endl;
+    }
+    cout << endl;
+
+    cout << num + 1 << ". Create new Course" << endl;
+    cout << num + 2 << ". Back to the semesters section" << endl;
+    cout << "Your option: ";
+    cin >> n;
+
+    if (n >= 1 && n <= num)
+    {
+    }
+    else
+    {
+        if (n == num + 1)
+        {
+            createNewCourse(address);
+        }
+        else
+        {
+            viewSemesters("School years/" + schoolYear, schoolYear);
+        }
+    }
+}
+
+void createNewCourse(string address)
+{
+
+
+
+    Course newCourse;
+
+    system("CLS");
+
+    cout << "***------------------  Create new course ----------------***" << endl;
+
+    cout << "Registration Date: " << endl;
+    cout << "Start date(XX/YY/ZZZZ): ";
+    cin >> newCourse.startDate;
+    cout << "End date(XX/YY/ZZZZ): ";
+    cin >> newCourse.endDate;
+
+    cout << endl;
+    cout << "Course ID: ";
+    cin >> newCourse.id;
+    cout << "Course name: ";
+    cin >> newCourse.name;
+    cout << "Course teacher name: ";
+    cin.ignore();
+    getline(cin, newCourse.teacherName);
+    cout << "Number of Credits: ";
+    cin >> newCourse.numberOfCredits;
+    cout << "Max student in a course: ";
+    cin >> newCourse.max;
+
+    cout << "Session 1: " << endl;
+    cout << "Date(MON/TUE/WED...): ";
+    cin >> newCourse.s1Date;
+    cout << "Time(S1,S2...): ";
+    cin >> newCourse.s1Time;
+
+    cout << "Session 2: " << endl;
+    cout << "Date(MON/TUE/WED...): ";
+    cin >> newCourse.s2Date;
+    cout << "Time(S1,S2...): ";
+    cin >> newCourse.s2Time;
+
+    createNewDirectory(".\\inputs\\" + address + "\\" + newCourse.name);
+
+    string path = ".\\inputs\\" + address + "\\" + newCourse.name + "\\Course Info.csv";
+    ofstream file(path);
+
+    file << "ID"
+         << "," << newCourse.id << endl;
+    file << "Name"
+         << "," << newCourse.name << endl;
+    file << "Teacher Name"
+         << "," << newCourse.teacherName << endl;
+    file << "Number of Credits"
+         << "," << newCourse.numberOfCredits << endl;
+    file << "Max"
+         << "," << newCourse.max << endl;
+    file << "S1 time"
+         << "," << newCourse.s1Time << endl;
+    file << "S1 date"
+         << "," << newCourse.s1Date << endl;
+    file << "S2 time"
+         << "," << newCourse.s2Time << endl;
+    file << "S2 date"
+         << "," << newCourse.s2Date << endl;
+    file << "Registration Date"
+         << "," << newCourse.startDate << "," << newCourse.endDate << endl;
+    path = ".\\inputs\\" + address + "\\" + newCourse.name + "\\Student Score Board.csv";
+    file(path);
+
+    file << "No,Student ID,Firstname, Homework, Midterm Mark, Final Mark, TotalMark" << endl;
 }
 
 void viewStudentInClass(string address, string className, string schoolYear)
@@ -38084,90 +38291,22 @@ void ExtractStudentInClass(Node *&pHead, string schoolYear, string className)
 }
 
 
-void ExtractStudentInfoFromCSVFileAndTurnToSLL(Node *&pHead)
-{
-    ifstream input;
-    input.open("./inputs/Students List.csv");
-    string temp;
-    getline(input, temp);
 
-    Node *pCur = pHead;
-
-    while (!input.eof())
-    {
-        string no, ID, LastName, FirstName, Password, Gender;
-        getline(input, no, ',');
-        getline(input, ID, ',');
-        getline(input, LastName, ',');
-        getline(input, FirstName, ',');
-        getline(input, Password, ',');
-        getline(input, Gender);
-
-        if (no == "")
-            return;
-
-        if (!pHead)
-        {
-            pHead = new Node;
-            pHead->student.no = no;
-            pHead->student.ID = ID;
-            pHead->student.LastName = LastName;
-            pHead->student.FirstName = FirstName;
-
-            pHead->student.Password = Password;
-            pHead->student.Gender = Gender;
-
-            pHead->next = nullptr;
-            pCur = pHead;
-        }
-        else
-        {
-            pCur->next = new Node;
-            pCur = pCur->next;
-            pCur->student.no = no;
-            pCur->student.ID = ID;
-            pCur->student.LastName = LastName;
-            pCur->student.FirstName = FirstName;
-
-            pCur->student.Password = Password;
-            pCur->student.Gender = Gender;
-
-            pCur->next = nullptr;
-        }
-    }
-    input.close();
-}
-
-bool validateUser(string username, string password, Node *pHead, Student &curStudent)
-{
-
-    while (pHead)
-    {
-        if (pHead->student.ID == username && pHead->student.Password == password)
-        {
-            curStudent = pHead->student;
-            return true;
-        }
-        pHead = pHead->next;
-    }
-    return false;
-}
-
-void displayStudentInfo(Student curStudent, Node *pStudentSLL, string classAddress)
+void displayStudentInfo(string classAddress)
 {
     system("CLS");
     int n;
 
-    cout << "No: " << curStudent.no << endl;
-    cout << "ID: " << curStudent.ID << endl;
-    cout << "Fullname: " << curStudent.LastName << ' ' << curStudent.FirstName << ' ' << endl;
-    cout << "Date Of Birth: " << curStudent.DateOfBirth << endl;
-    cout << "Gender: " << curStudent.Gender << endl;
-    cout << "Social ID: " << curStudent.SocialID << endl;
+    cout << "No: " << student.no << endl;
+    cout << "ID: " << student.ID << endl;
+    cout << "Fullname: " << student.LastName << ' ' << student.FirstName << ' ' << endl;
+    cout << "Date Of Birth: " << student.DateOfBirth << endl;
+    cout << "Gender: " << student.Gender << endl;
+    cout << "Social ID: " << student.SocialID << endl;
     cout << "--------------------------------------------------------------------" << endl;
 
-    cout << "Username: " << curStudent.ID << endl;
-    cout << "Password: " << curStudent.Password << endl;
+    cout << "Username: " << student.ID << endl;
+    cout << "Password: " << student.Password << endl;
 
     cout << endl;
     cout << "1. Log out" << endl;
@@ -38181,42 +38320,42 @@ void displayStudentInfo(Student curStudent, Node *pStudentSLL, string classAddre
     }
     else
     {
-        changePassword(curStudent);
-        updatePasswordChangeToCSVFile(curStudent, pStudentSLL, classAddress);
+        changePassword();
+        updatePasswordChangeToCSVFile(classAddress);
         cout << "Successfully Updated!!!" << endl;
         cout << "Hit any key to see the change.";
         getch();
-        displayStudentInfo(curStudent, pStudentSLL, classAddress);
+        displayStudentInfo(classAddress);
     }
 
 
 }
 
-void changePassword(Student &curStudent)
+void changePassword()
 {
     string newPass;
     cout << "Your new Password: ";
     cin >> newPass;
-    curStudent.Password = newPass;
+    student.Password = newPass;
 }
 
-void updatePasswordChangeToCSVFile(Student curStudent, Node *&pStudentSLL, string classAddress)
+void updatePasswordChangeToCSVFile(string classAddress)
 {
 
-    Node *pCur = pStudentSLL;
+    Node *pCur = studentListHead;
     while (pCur)
     {
-        if (pCur->student.ID == curStudent.ID)
+        if (pCur->student.ID == student.ID)
         {
-            pCur->student.Password = curStudent.Password;
+            pCur->student.Password = student.Password;
         }
         pCur = pCur->next;
     }
-# 765 "C:\\Users\\Nien\\Desktop\\Project\\functions.cpp"
-    writeCSVFile(pStudentSLL, classAddress);
+# 896 "C:\\Users\\Nien\\Desktop\\Project\\functions.cpp"
+    writeCSVFile(classAddress);
 }
 
-void writeCSVFile(Node *pStudentSLL, string classAddress)
+void writeCSVFile(string classAddress)
 {
     ofstream output;
     classAddress = ".\\inputs\\" + classAddress;
@@ -38224,20 +38363,68 @@ void writeCSVFile(Node *pStudentSLL, string classAddress)
     output.open(classAddress);
     output << "No ,ID,Lastname,Firstname,Gender,Date Of Birth,Social ID,Password" << endl;
 
-    while (pStudentSLL)
+    Node *pCur = studentListHead;
+    while (pCur)
     {
-        output << pStudentSLL->student.no << ',';
-        output << pStudentSLL->student.ID << ',';
-        output << pStudentSLL->student.LastName << ',';
-        output << pStudentSLL->student.FirstName << ',';
-        output << pStudentSLL->student.Gender << ',';
-        output << pStudentSLL->student.DateOfBirth << ',';
-        output << pStudentSLL->student.SocialID << ',';
-        output << pStudentSLL->student.Password << endl;
-        pStudentSLL = pStudentSLL->next;
+        output << pCur->student.no << ',';
+        output << pCur->student.ID << ',';
+        output << pCur->student.LastName << ',';
+        output << pCur->student.FirstName << ',';
+        output << pCur->student.Gender << ',';
+        output << pCur->student.DateOfBirth << ',';
+        output << pCur->student.SocialID << ',';
+        output << pCur->student.Password << endl;
+        pCur = pCur->next;
     }
 
     output.close();
+}
+
+void createNewSchoolYear()
+{
+    string s;
+    cout << endl;
+    cout << "Create new school year(Year1 - Year2):" << endl;
+    cin.ignore();
+    getline(cin, s);
+
+    createNewDirectory("./inputs/School years/" + s);
+    cout << "Create successfully..." << endl;
+    getch();
+    viewSchoolYear();
+}
+
+void CreateSemester(string address, string schoolYear)
+{
+    struct stat dst, dst2;
+    string s1, s2, st, ed;
+    cout << "Your new semester: ";
+    cin.ignore();
+    getline(cin, s1);
+    cout << "School year to create(Year1 - Year2): ";
+
+    getline(cin, s2);
+    string url = "./inputs/School years/" + s2 + "/Semesters/" + s1;
+
+
+    if (stat(url.c_str(), &dst) == 0)
+    {
+        cout << "Semester existed, please try again \n";
+        CreateSemester(address, schoolYear);
+    }
+    else
+    {
+        string url2 = "./inputs/School years/" + s2 + "/Semesters/";
+        if (stat(url.c_str(), &dst2) != 0)
+        {
+            mkdir(url2.c_str());
+        }
+        mkdir(url.c_str());
+        cout << "Semester has been created. \n";
+    }
+    cout << "Create successfully..." << endl;
+    getch();
+    viewSemesters(address, schoolYear);
 }
 
 void openCSVFileFromUserInput()
@@ -38269,11 +38456,9 @@ void openCSVFileFromUserInput()
 
 void createNewDirectory(string url)
 {
-    string s;
-    cout << "Your new File name: ";
-    getline(cin, s);
 
-    url += s;
+
+
     mkdir(url.c_str());
 }
 
@@ -38303,15 +38488,15 @@ void ListAllFileNames(string address, bool isFile, string arr[], int &num)
     dr = opendir(path.c_str());
 
     if (dr != 
-# 854 "C:\\Users\\Nien\\Desktop\\Project\\functions.cpp" 3 4
+# 1031 "C:\\Users\\Nien\\Desktop\\Project\\functions.cpp" 3 4
              __null
-# 854 "C:\\Users\\Nien\\Desktop\\Project\\functions.cpp"
+# 1031 "C:\\Users\\Nien\\Desktop\\Project\\functions.cpp"
                  )
     {
         for (d = readdir(dr); d != 
-# 856 "C:\\Users\\Nien\\Desktop\\Project\\functions.cpp" 3 4
+# 1033 "C:\\Users\\Nien\\Desktop\\Project\\functions.cpp" 3 4
                                   __null
-# 856 "C:\\Users\\Nien\\Desktop\\Project\\functions.cpp"
+# 1033 "C:\\Users\\Nien\\Desktop\\Project\\functions.cpp"
                                       ; d = readdir(dr))
         {
             string type = d->d_name;
@@ -38321,9 +38506,9 @@ void ListAllFileNames(string address, bool isFile, string arr[], int &num)
                 if (isFile)
                 {
                     if (dst.st_mode & 
-# 864 "C:\\Users\\Nien\\Desktop\\Project\\functions.cpp" 3
+# 1041 "C:\\Users\\Nien\\Desktop\\Project\\functions.cpp" 3
                                      0x8000
-# 864 "C:\\Users\\Nien\\Desktop\\Project\\functions.cpp"
+# 1041 "C:\\Users\\Nien\\Desktop\\Project\\functions.cpp"
                                             )
                     {
                         string name = removeType(d->d_name);
@@ -38335,9 +38520,9 @@ void ListAllFileNames(string address, bool isFile, string arr[], int &num)
                 else
                 {
                     if (dst.st_mode & 
-# 874 "C:\\Users\\Nien\\Desktop\\Project\\functions.cpp" 3
+# 1051 "C:\\Users\\Nien\\Desktop\\Project\\functions.cpp" 3
                                      0x4000
-# 874 "C:\\Users\\Nien\\Desktop\\Project\\functions.cpp"
+# 1051 "C:\\Users\\Nien\\Desktop\\Project\\functions.cpp"
                                             )
                     {
                         string name = removeType(d->d_name);
@@ -38359,8 +38544,4 @@ template <typename T>
 void printElement(T t, const int &width)
 {
     cout << left << setw(width) << setfill(' ') << t;
-}
-
-void createNewSchoolYear()
-{
 }

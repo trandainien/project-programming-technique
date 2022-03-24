@@ -10,12 +10,6 @@
 #include <iomanip> //format into table data
 using namespace std;
 
-struct Course
-{
-    string StartDate, EndDate, ID, Name, TeacherName, Day1, Day2, Time1, Time2;
-    int NumberOfCredits, MaxNumOfStudent;
-};
-
 struct Student
 {
     string no, ID, LastName, FirstName, Gender, DateOfBirth, SocialID, Password;
@@ -36,6 +30,26 @@ struct StaffList
 {
     Staff staff;
     StaffList *next;
+};
+
+struct Date
+{
+    int day;
+    int month;
+    int year;
+};
+
+struct Course
+{
+    string id, name, teacherName, max, s1Time, s1Date, s2Time, s2Date;
+    Date startDate, endDate;
+    int numberOfCredits = 50;
+};
+
+struct CourseList
+{
+    Course course;
+    CourseList *next;
 };
 
 void start();
@@ -68,6 +82,11 @@ void createNewSchoolYear();
 void viewSemesters(string address, string schoolYear);
 void viewCourse(string address, string schoolYear, string term);
 void CreateSemester(string address, string schoolYear);
+void createNewCourse(string address, string schoolYear, string term);
+bool checkDay(string day);
+bool checkTime(string time);
+bool checkdate(int d, int m, int y);
+void viewCourseInfo(string address, string schoolYear, string term, string nameCourse);
 
 // Files
 void createNewDirectory(string url);
