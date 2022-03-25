@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <sys\stat.h>
 #include <dirent.h>
+#include<io.h>
 #include <conio.h> //take getCh() from this library
 using namespace std;
 
@@ -41,3 +42,4 @@ void createNewDirectory();
 void ListAllFileNames(string address);
 string removeType(string s);
 void listOFYear(string initStrPath);
+void DeleteFileIfExist(const char* path);

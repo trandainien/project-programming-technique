@@ -359,3 +359,9 @@ void listOFYear(string initStrPath){
 	}
 	closedir(dp);
 }
+
+void DeleteFileIfExist(const char* path) 
+{
+  	bool check = access(path, 0);
+ 	if (check != -1) remove(path);  	
+}
