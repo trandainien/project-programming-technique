@@ -686,8 +686,10 @@ void viewCourseInfo(string address, string schoolYear, string term, string nameC
     TurnDate(temp, course.startDate.year, course.startDate.month, course.startDate.day);
     getline(input, temp);
     TurnDate(temp, course.endDate.year, course.endDate.month, course.endDate.day);
+    input.close();
 
     system("CLS");
+    int n;
     // cout << ".\\inputs\\" + address + "\\" + nameCourse + "\\Course Info " << endl;
     cout << "***------------------   " + nameCourse + " Course Info ----------------***" << endl;
     cout << "Course Registration Date: " << course.startDate.day << "/" << course.startDate.month << "/" << course.startDate.year << " - " << course.endDate.day << "/" << course.endDate.month << "/" << course.endDate.year << endl;
@@ -705,9 +707,237 @@ void viewCourseInfo(string address, string schoolYear, string term, string nameC
     cout << "Day: " << getDay(course.s2Date) << endl;
     cout << endl;
 
+    cout << "1. Update Course" << endl;
+    cout << "2. Delete Course" << endl;
+    cout << "3. Back to the view Course section" << endl;
+    cout << "Your option: ";
+    cin >> n;
+
+    switch (n)
+    {
+    case 1:
+        updateCourse(course, address, schoolYear, term, nameCourse);
+    case 2:
+    case 3:
+        viewCourse(address, schoolYear, term);
+    }
     // update course
     // delete course
     // back to the view course
+}
+
+void updateCourse(Course &course, string address, string schoolYear, string term, string nameCourse)
+{
+
+    string isFinish = "";
+
+    while (isFinish != "NO")
+    {
+        int n;
+        system("CLS");
+        cout << "***------------------   Update Course  ----------------***" << endl;
+        cout << "1. Course Registration Date: " << course.startDate.day << "/" << course.startDate.month << "/" << course.startDate.year << " - " << course.endDate.day << "/" << course.endDate.month << "/" << course.endDate.year << endl;
+        cout << endl;
+        cout << "2. ID: " << course.id << endl;
+        cout << "3. Name: " << course.name << endl;
+        cout << "4. Teacher name: " << course.teacherName << endl;
+        cout << "5. Number of Credits: " << course.numberOfCredits << endl;
+        cout << "6. Max student in this course: " << course.max << endl;
+        cout << "Session 1: " << endl;
+        cout << "7. Time: " << getTime(course.s1Time) << endl;
+        cout << "8. Day: " << getDay(course.s1Date) << endl;
+        cout << "Session 2: " << endl;
+        cout << "9. Time: " << getTime(course.s2Time) << endl;
+        cout << "10. Day: " << getDay(course.s2Date) << endl;
+        cout << endl;
+        cout << "Your option: ";
+        cin >> n;
+
+        string oldname;
+        string path, newPath;
+        bool tmp;
+        switch (n)
+        {
+        case 1:
+            int d, m, y;
+            cout << endl;
+            cout << "Registration Date: " << endl;
+            cout << "Start date: " << endl;
+            cout << "Day: ";
+            cin >> d;
+            cout << "Month: ";
+            cin >> m;
+            cout << "Year: ";
+            cin >> y;
+
+            while (!checkdate(d, m, y))
+            {
+                cout << "Your input is invalid. Please type again!!!" << endl;
+                cout << "Day: ";
+                cin >> d;
+                cout << "Month: ";
+                cin >> m;
+                cout << "Year: ";
+                cin >> y;
+                cout << endl;
+            }
+
+            course.startDate.day = d;
+            course.startDate.month = m;
+            course.startDate.year = y;
+            cout << "End date: " << endl;
+            cout << "Day: ";
+            cin >> d;
+            cout << "Month: ";
+            cin >> m;
+            cout << "Year: ";
+            cin >> y;
+            while (!checkdate(d, m, y))
+            {
+                cout << "Your input is invalid. Please type again!!!" << endl;
+                cout << "Day: ";
+                cin >> d;
+                cout << "Month: ";
+                cin >> m;
+                cout << "Year: ";
+                cin >> y;
+                cout << endl;
+            }
+
+            course.endDate.day = d;
+            course.endDate.month = m;
+            course.endDate.year = y;
+            break;
+        case 2:
+            cout << endl;
+            cout << "Course ID: ";
+            cin >> course.id;
+            break;
+        case 3:
+        {
+            oldname = course.name;
+            cout << endl;
+            cout << "Course name: ";
+            cin >> course.name;
+
+            // change directory name too.
+            if (term == "First Term")
+            {
+                path = ".\\inputs\\School years\\" + schoolYear + "\\Semesters\\1\\" + oldname;
+                newPath = ".\\inputs\\School years\\" + schoolYear + "\\Semesters\\1\\" + course.name;
+            }
+            else
+            {
+                if (term == "Second Term")
+                {
+                    path = ".\\inputs\\School years\\" + schoolYear + "\\Semesters\\2\\" + oldname;
+                    newPath = ".\\inputs\\School years\\" + schoolYear + "\\Semesters\\2\\" + course.name;
+                }
+                else
+                {
+                    path = ".\\inputs\\School years\\" + schoolYear + "\\Semesters\\3\\" + oldname;
+                    newPath = ".\\inputs\\School years\\" + schoolYear + "\\Semesters\\3\\" + course.name;
+                }
+            }
+
+            // path = ".\\inputs\\" + address.c_str() + oldname.c_str();
+            char p[path.length() + 1];
+            char p1[newPath.length() + 1];
+
+            strcpy(p, path.c_str());
+            strcpy(p1, newPath.c_str());
+            //cout << p << endl;
+            //cout << p1 << endl;
+            // newPath = ".\\inputs\\" + address.c_str() + course.name.c_str();
+            if (rename(p, p1) != 0)
+                perror("Error renaming file");
+            else
+                cout << "Course renamed successfully";
+            break;
+        }
+        case 4:
+            cout << endl;
+            cout << "Course teacher name: ";
+            cin.ignore();
+            getline(cin, course.teacherName);
+            break;
+        case 5:
+            cout << endl;
+            cout << "Number of Credits: ";
+            cin >> course.numberOfCredits;
+            break;
+
+        case 6:
+            cout << endl;
+            cout << "6. Max student in this course: ";
+            cin >> course.max;
+            break;
+        case 7:
+            cout << endl;
+            cout << "Time(S1,S2,S3,S4): ";
+            cin >> course.s1Time;
+            while (!checkTime(course.s1Time))
+            {
+                cout << "Your input is invalid. Please type again, example: S1" << endl;
+                cout << "Your input : ";
+                cin >> course.s1Time;
+
+                cout << endl;
+            }
+            break;
+        case 8:
+            cout << endl;
+            cout << "Date(MON/TUE/WED...): ";
+            cin >> course.s1Date;
+            while (!checkDay(course.s1Date))
+            {
+                cout << "Your input is invalid. Please type again, example: MON." << endl;
+                cout << "Your input: ";
+                cin >> course.s1Date;
+                cout << endl;
+            }
+            break;
+
+        case 9:
+            cout << endl;
+            cout << "Time(S1,S2,S3,S4): ";
+            cin >> course.s2Time;
+            while (!checkTime(course.s2Time))
+            {
+                cout << "Your input is invalid. Please type again, example: S1" << endl;
+                cout << "Your input : ";
+                cin >> course.s2Time;
+
+                cout << endl;
+            }
+            break;
+        case 10:
+            cout << endl;
+            cout << "Date(MON/TUE/WED...): ";
+            cin >> course.s2Date;
+            while (!checkDay(course.s2Date))
+            {
+                cout << "Your input is invalid. Please type again, example: MON." << endl;
+                cout << "Your input: ";
+                cin >> course.s2Date;
+                cout << endl;
+            }
+            break;
+        }
+
+        cout << endl;
+        cout << "Do you want to continue?(YES/NO): ";
+        cin >> isFinish;
+    }
+
+    // write new course info to csv file
+    string path = ".\\inputs\\" + address + "\\" + course.name + "\\Course Info.csv";
+    // cout << path << endl;
+    writeCourseToFile(path, course);
+
+    cout << "Successfully updated!!! type anything to continue";
+    getch();
+    viewCourseInfo(address, schoolYear, term, course.name);
 }
 
 string getTime(string time)
@@ -850,6 +1080,7 @@ void createNewCourse(string address, string schoolYear, string term)
     cin.ignore();
     getline(cin, newCourse.teacherName);
     cout << "Number of Credits: ";
+
     cin >> newCourse.numberOfCredits;
     cout << "Max student in a course: ";
     cin >> newCourse.max;
@@ -897,6 +1128,22 @@ void createNewCourse(string address, string schoolYear, string term)
     createNewDirectory(".\\inputs\\" + address + "\\" + newCourse.name);
 
     string path = ".\\inputs\\" + address + "\\" + newCourse.name + "\\Course Info.csv";
+    writeCourseToFile(path, newCourse);
+
+    path = ".\\inputs\\" + address + "\\" + newCourse.name + "\\Student Score Board.csv";
+    ofstream file1(path);
+
+    file1 << "No,Student ID,Lastname,Firstname, Homework, Midterm Mark, Final Mark, TotalMark" << endl;
+
+    cout << endl;
+    cout << "Please check the info again and hit any key to continue...";
+    getch();
+
+    viewCourse(address, schoolYear, term);
+}
+
+void writeCourseToFile(string path, Course newCourse)
+{
     ofstream file(path);
     // write title in csv fileName
     file << "ID"
@@ -919,16 +1166,6 @@ void createNewCourse(string address, string schoolYear, string term)
          << "," << newCourse.s2Date << endl;
     file << "Registration Date"
          << "," << newCourse.startDate.day << "/" << newCourse.startDate.month << "/" << newCourse.startDate.year << "," << newCourse.endDate.day << "/" << newCourse.endDate.month << "/" << newCourse.endDate.year << endl;
-    path = ".\\inputs\\" + address + "\\" + newCourse.name + "\\Student Score Board.csv";
-    ofstream file1(path);
-
-    file1 << "No,Student ID,Lastname,Firstname, Homework, Midterm Mark, Final Mark, TotalMark" << endl;
-
-    cout << endl;
-    cout << "Please check the info again and hit any key to continue...";
-    getch();
-
-    viewCourse(address, schoolYear, term);
 }
 
 bool checkDay(string day)

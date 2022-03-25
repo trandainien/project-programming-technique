@@ -8,6 +8,9 @@
 #include <conio.h> //take getCh() from this library
 #include <stdio.h>
 #include <iomanip> //format into table data
+#include <cstdio>
+#include <bits/stdc++.h>
+
 using namespace std;
 
 struct Student
@@ -41,7 +44,8 @@ struct Date
 
 struct Course
 {
-    string id, name, teacherName, s1Time, s1Date, s2Time, s2Date;
+    string id, teacherName, s1Time, s1Date, s2Time, s2Date;
+    string name;
     Date startDate, endDate;
     string max = "50";
     string numberOfCredits;
@@ -84,10 +88,12 @@ void viewSemesters(string address, string schoolYear);
 void viewCourse(string address, string schoolYear, string term);
 void CreateSemester(string address, string schoolYear);
 void createNewCourse(string address, string schoolYear, string term);
+void writeCourseToFile(string path, Course newCourse);
 bool checkDay(string day);
 bool checkTime(string time);
 bool checkdate(int d, int m, int y);
 void viewCourseInfo(string address, string schoolYear, string term, string nameCourse);
+void updateCourse(Course &course, string address, string schoolYear, string term, string nameCourse);
 int turnToInt(char c);
 void TurnDate(string date, int &y, int &m, int &d);
 string getTime(string time);
