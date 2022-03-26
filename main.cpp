@@ -1,5 +1,11 @@
 #include "functions.h"
-
+/*
+    Lan sau co gi moi nguoi comment cai #include duoi neu chuong trinh co loi nha.
+    Chuong trinh tui ko chay duoc neu ko co cai #include duoi.
+    Thanh that xin loi moi nguoi ve su bat tien nay.
+                                    -Sonne(not)Stupid-
+*/
+#include "functions.cpp"
 int main()
 {
      start();
