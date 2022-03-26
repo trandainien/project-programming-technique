@@ -10,6 +10,8 @@
 #include <iomanip> //format into table data
 #include <cstdio>
 #include <bits/stdc++.h>
+#include <unistd.h>
+#include <filesystem>
 
 using namespace std;
 
@@ -103,7 +105,8 @@ string getDay(string day);
 void createNewDirectory(string url);
 void ListAllFileNames(string address, bool isFile, string arr[], int &num);
 string removeType(string s);
-
+void DeleteFile(string path);
+void DeleteFolder(string path);
 // format
 template <class T>
 void printElement(T t, const int &width);

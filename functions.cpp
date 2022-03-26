@@ -175,6 +175,7 @@ void findStudentInAClass(string curID, string address, bool &isStudentExist, str
             student = pCur->student;
         }
     }
+    input.close();
 }
 
 void StudentLoginSection()
@@ -448,6 +449,7 @@ void ExtractStaffInfoAndTurnToSLL(StaffList *&pHead)
     input.close();
 }
 
+// coi nguon address
 void viewSchoolYear()
 {
     system("CLS");
@@ -471,7 +473,7 @@ void viewSchoolYear()
 
     if (n >= 1 && n <= num)
     {
-        string address = "School years\\" + schoolYears[n - 1];
+        string address = "School years/" + schoolYears[n - 1];
         viewClassesInSchoolYear(address, schoolYears[n - 1]);
     }
     else
@@ -496,7 +498,7 @@ void viewClassesInSchoolYear(string address, string schoolYear)
     int num;
     int n;
 
-    ListAllFileNames(address, true, classNames, num);
+    ListAllFileNames("School years/" + schoolYear, true, classNames, num);
     for (int i = 0; i < num; i++)
     {
         cout << i + 1 << ". " << classNames[i] << endl;
@@ -511,7 +513,7 @@ void viewClassesInSchoolYear(string address, string schoolYear)
 
     if (n >= 1 && n <= num)
     {
-        viewStudentInClass(address, classNames[n - 1], schoolYear);
+        viewStudentInClass("School years/" + schoolYear, classNames[n - 1], schoolYear);
     }
     else
     {
@@ -543,7 +545,7 @@ void viewSemesters(string address, string schoolYear)
     int num = 0;
     int n;
 
-    ListAllFileNames(address + "/Semesters", false, semesters, num);
+    ListAllFileNames("School years/" + schoolYear + "/Semesters", false, semesters, num);
     for (int i = 0; i < num; i++)
     {
         cout << i + 1 << ". " << semesters[i] << endl;
@@ -570,13 +572,13 @@ void viewSemesters(string address, string schoolYear)
         switch (n)
         {
         case 1:
-            viewCourse(address + "/Semesters/1", schoolYear, "First Term");
+            viewCourse("School years/" + schoolYear + +"/Semesters/1", schoolYear, "1");
             break;
         case 2:
-            viewCourse(address + "/Semesters/2", schoolYear, "Second Term");
+            viewCourse("School years/" + schoolYear + +"/Semesters/2", schoolYear, "2");
             break;
         case 3:
-            viewCourse(address + "/Semesters/3", schoolYear, "Third Term");
+            viewCourse("School years/" + schoolYear + +"/Semesters/3", schoolYear, "3");
             break;
         }
     }
@@ -617,12 +619,25 @@ void viewSemesters(string address, string schoolYear)
 void viewCourse(string address, string schoolYear, string term)
 {
     system("CLS");
-    cout << "***------------------   Courses in " << term << " of " << schoolYear << " ----------------***" << endl;
+    string fullTerm = "";
+    if (term == "1")
+    {
+        fullTerm = "First Term";
+    }
+    else if (term == "2")
+    {
+        fullTerm = "Second Term";
+    }
+    else
+    {
+        fullTerm = "Third Term";
+    }
+    cout << "***------------------   Courses in " << fullTerm << " of " << schoolYear << " ----------------***" << endl;
     string nameCourses[100];
     int num = 0;
     int n;
 
-    ListAllFileNames(address, false, nameCourses, num);
+    ListAllFileNames("School years/" + schoolYear + "/Semesters/" + term, false, nameCourses, num);
 
     for (int i = 0; i < num; i++)
     {
@@ -658,7 +673,7 @@ void viewCourseInfo(string address, string schoolYear, string term, string nameC
 
     cout << address;
     ifstream input;
-    input.open(".\\inputs\\" + address + "\\" + nameCourse + "\\Course Info.csv");
+    input.open("./inputs/School years/" + schoolYear + "/Semesters/" + term + "/" + nameCourse + "/Course Info.csv");
 
     Course course;
     string temp = "";
@@ -713,11 +728,25 @@ void viewCourseInfo(string address, string schoolYear, string term, string nameC
     cout << "Your option: ";
     cin >> n;
 
+    string url = "";
+    string file1, file2;
     switch (n)
     {
     case 1:
         updateCourse(course, address, schoolYear, term, nameCourse);
     case 2:
+        url = "./inputs/School years/" + schoolYear + "/Semesters/" + term + "/" + nameCourse;
+
+        file1 = url + "/Course Info.csv";
+        file2 = url + "/Student Score Board.csv";
+        cout << file1 << ' ' << file2 << endl;
+        DeleteFile(file1);
+
+        DeleteFile(file2);
+
+        DeleteFolder(url);
+
+        viewCourse(address, schoolYear, term);
     case 3:
         viewCourse(address, schoolYear, term);
     }
@@ -818,37 +847,40 @@ void updateCourse(Course &course, string address, string schoolYear, string term
             oldname = course.name;
             cout << endl;
             cout << "Course name: ";
-            cin >> course.name;
+            cin.ignore();
+            getline(cin, course.name);
 
             // change directory name too.
-            if (term == "First Term")
-            {
-                path = ".\\inputs\\School years\\" + schoolYear + "\\Semesters\\1\\" + oldname;
-                newPath = ".\\inputs\\School years\\" + schoolYear + "\\Semesters\\1\\" + course.name;
-            }
-            else
-            {
-                if (term == "Second Term")
-                {
-                    path = ".\\inputs\\School years\\" + schoolYear + "\\Semesters\\2\\" + oldname;
-                    newPath = ".\\inputs\\School years\\" + schoolYear + "\\Semesters\\2\\" + course.name;
-                }
-                else
-                {
-                    path = ".\\inputs\\School years\\" + schoolYear + "\\Semesters\\3\\" + oldname;
-                    newPath = ".\\inputs\\School years\\" + schoolYear + "\\Semesters\\3\\" + course.name;
-                }
-            }
+            // if (term == "First Term")
+            // {
+            //     path = ".\\inputs\\School years\\" + schoolYear + "\\Semesters\\1\\" + oldname;
+            //     newPath = ".\\inputs\\School years\\" + schoolYear + "\\Semesters\\1\\" + course.name;
+            // }
+            // else
+            // {
+            //     if (term == "Second Term")
+            //     {
+            //         path = ".\\inputs\\School years\\" + schoolYear + "\\Semesters\\2\\" + oldname;
+            //         newPath = ".\\inputs\\School years\\" + schoolYear + "\\Semesters\\2\\" + course.name;
+            //     }
+            //     else
+            //     {
+            //         path = ".\\inputs\\School years\\" + schoolYear + "\\Semesters\\3\\" + oldname;
+            //         newPath = ".\\inputs\\School years\\" + schoolYear + "\\Semesters\\3\\" + course.name;
+            //     }
+            // }
 
             // path = ".\\inputs\\" + address.c_str() + oldname.c_str();
+            path = "./inputs/School years/" + schoolYear + "/Semesters/" + term + "/" + oldname;
+            newPath = "./inputs/School years/" + schoolYear + "/Semesters/" + term + "/" + course.name;
             char p[path.length() + 1];
             char p1[newPath.length() + 1];
 
             strcpy(p, path.c_str());
             strcpy(p1, newPath.c_str());
-            //cout << p << endl;
-            //cout << p1 << endl;
-            // newPath = ".\\inputs\\" + address.c_str() + course.name.c_str();
+            // cout << p << endl;
+            // cout << p1 << endl;
+            //  newPath = ".\\inputs\\" + address.c_str() + course.name.c_str();
             if (rename(p, p1) != 0)
                 perror("Error renaming file");
             else
@@ -1075,9 +1107,10 @@ void createNewCourse(string address, string schoolYear, string term)
     cout << "Course ID: ";
     cin >> newCourse.id;
     cout << "Course name: ";
-    cin >> newCourse.name;
-    cout << "Course teacher name: ";
     cin.ignore();
+    getline(cin, newCourse.name);
+    cout << "Course teacher name: ";
+
     getline(cin, newCourse.teacherName);
     cout << "Number of Credits: ";
 
@@ -1125,16 +1158,16 @@ void createNewCourse(string address, string schoolYear, string term)
 
         cout << endl;
     }
-    createNewDirectory(".\\inputs\\" + address + "\\" + newCourse.name);
+    createNewDirectory("./inputs/School years/" + schoolYear + "/Semesters/" + term + "/" + newCourse.name);
 
-    string path = ".\\inputs\\" + address + "\\" + newCourse.name + "\\Course Info.csv";
+    string path = "./inputs/School years/" + schoolYear + "/Semesters/" + term + "/" + newCourse.name + "/Course Info.csv";
     writeCourseToFile(path, newCourse);
 
-    path = ".\\inputs\\" + address + "\\" + newCourse.name + "\\Student Score Board.csv";
+    path = "./inputs/School years/" + schoolYear + "/Semesters/" + term + "/" + newCourse.name + "/Student Score Board.csv";
     ofstream file1(path);
 
     file1 << "No,Student ID,Lastname,Firstname, Homework, Midterm Mark, Final Mark, TotalMark" << endl;
-
+    file1.close();
     cout << endl;
     cout << "Please check the info again and hit any key to continue...";
     getch();
@@ -1166,6 +1199,8 @@ void writeCourseToFile(string path, Course newCourse)
          << "," << newCourse.s2Date << endl;
     file << "Registration Date"
          << "," << newCourse.startDate.day << "/" << newCourse.startDate.month << "/" << newCourse.startDate.year << "," << newCourse.endDate.day << "/" << newCourse.endDate.month << "/" << newCourse.endDate.year << endl;
+
+    file.close();
 }
 
 bool checkDay(string day)
@@ -1301,6 +1336,7 @@ void ExtractStudentInClass(Node *&pHead, string schoolYear, string className)
             pCur->next = nullptr;
         }
     }
+    input.close();
 }
 
 // need to fix
@@ -1549,4 +1585,29 @@ template <typename T>
 void printElement(T t, const int &width)
 {
     cout << left << setw(width) << setfill(' ') << t;
+}
+
+// fix later
+void DeleteFile(string path)
+{
+
+    while (remove(path.c_str()) != 0)
+    {
+        perror("Error deleting file: ");
+        cout << endl;
+    }
+    cout << "Successfully deleted..." << endl;
+    getch();
+}
+
+void DeleteFolder(string path)
+{
+
+    while (rmdir(path.c_str()) != 0)
+    {
+        perror("Error deleting folder: ");
+        cout << endl;
+    }
+    cout << "Successfully deleted..." << endl;
+    getch();
 }
