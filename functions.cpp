@@ -1456,11 +1456,12 @@ void CreateSemester(string address, string schoolYear)
     struct stat dst, dst2;
     string s1, s2, st, ed;
     cout << "Your new semester: ";
-    cin.ignore();
+    //cin.ignore();
     getline(cin, s1);
-    cout << "School year to create(Year1 - Year2): ";
 
+    cout << "School year to create(Year1 - Year2): ";
     getline(cin, s2);
+
     string url = "./inputs/School years/" + s2 + "/Semesters/" + s1;
 
     // createNewDirectory(url.c_str());
@@ -1472,11 +1473,15 @@ void CreateSemester(string address, string schoolYear)
     else
     {
         string url2 = "./inputs/School years/" + s2 + "/Semesters/";
-        if (stat(url.c_str(), &dst2) != 0)
+        if (stat(url2.c_str(), &dst2) != 0)
         {
             mkdir(url2.c_str());
+            url2 += s1;
+            mkdir(url2.c_str());
         }
-        mkdir(url.c_str());
+        else {
+            mkdir(url.c_str());
+        }
         cout << "Semester has been created. \n";
     }
     cout << "Create successfully..." << endl;
