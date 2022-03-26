@@ -1616,3 +1616,74 @@ void DeleteFolder(string path)
     cout << "Successfully deleted..." << endl;
     getch();
 }
+//need checking
+void RegistrationDateCourse(CourseDate &Date) {
+    cout << "Choose date to create course registration session " << endl;
+    bool check = true;
+    while (check) {
+        int ans = 0;
+        cout << "1. Start date to begin registration: " << endl;
+        cout << "    Day: ";
+        cin >> Date.start_day;
+        cout << "    Month: ";
+        cin >> Date.start_month;
+        cout << "    Year: ";
+        cin >> Date.start_year;
+        cout << "2. Start date to end registration: " << endl;
+        cout << "    Day: ";
+        cin >> Date.end_day;
+        cout << "    Month: ";
+        cin >> Date.end_month;
+        cout << "    Year: ";
+        cin >> Date.end_year;
+        cout << "This is your date on the registration: " << endl
+             << "  1. Start date: " << Date.start_day << " - " << Date.start_month << " - " << Date.start_year << endl
+             << "  2. End date: " << Date.end_day << " - " << Date.end_month << " - " << Date.end_year << endl;
+        cout << "Press 1 if you want to save, press 0 if you want to turn back." << endl;
+        cout << "Your answer: "; 
+        cin >> ans;
+        if (ans == 1) {
+            cout << "Course registration session created succesfully." << endl;
+            check = false;
+        }
+    }
+}
+int LeapYears(int year, int month) { //sub - function to function CheckDate()
+    int years = year;
+    if (month <= 2) {
+        years--;
+    }
+    return (years / 4 - years / 100 + years / 400);
+}
+int CountDays(tm* y,CourseDate x) { //sub - function to function CheckDate()
+    int monthDays[12] = { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
+    long int n1 = (y->tm_year + 1900) * 365 + y->tm_mday; //somehow (local_time->tm_year = current year - 1990)
+    for (int i = 0; i < y->tm_mon; i++) {                 //        (current1 month = 1 + local_time->tm_mon)
+        n1 += monthDays[i];                               // don't ask me because idk why too  ¯\_( ͡° ͜ʖ ͡°)_/¯ 
+    }
+    n1 += LeapYears(y->tm_year + 1900, y->tm_mon + 1);
+
+    long int n2 = x.end_year * 365 + x.end_day;
+    for (int i = 0; i < x.end_month - 1; i++) {
+        n2 += monthDays[i];
+    }
+    n2 += LeapYears(x.end_year, x.end_month);
+    return (n2 - n1);
+}
+void CheckDate(CourseDate Date) {
+    time_t ttime = time(0);
+    struct tm *local_time = localtime(&ttime);
+    cout << "....Checking days left to register...." << endl;
+    if (CountDays(local_time, Date) == 0) {
+        cout << "This is the last day of the course registration session." << endl;
+    }
+    else {
+        cout << "Days left untill expiration: ";
+        if (CountDays(local_time, Date) > 1) {
+            cout << CountDays(local_time, Date) << " days." << endl;
+        }
+        else {
+            cout << CountDays(local_time, Date) << " day." << endl;
+        }
+    }
+}

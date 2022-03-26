@@ -59,6 +59,10 @@ struct CourseList
     CourseList *next;
 };
 
+struct CourseDate {
+    int start_day, start_month, start_year, end_day, end_month, end_year;
+};
+
 void start();
 void loginSection();
 void openCSVFileFromUserInput();
@@ -100,7 +104,10 @@ int turnToInt(char c);
 void TurnDate(string date, int &y, int &m, int &d);
 string getTime(string time);
 string getDay(string day);
-
+void RegistrationDateCourse(CourseDate &Date);
+int LeapYears(int year, int month);
+int CountDays(tm* y,CourseDate x);
+void CheckDate(CourseDate Date);
 // Files
 void createNewDirectory(string url);
 void ListAllFileNames(string address, bool isFile, string arr[], int &num);
