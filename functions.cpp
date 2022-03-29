@@ -778,7 +778,9 @@ void updateCourse(Course &course, string address, string schoolYear, string term
         cout << "Session 2: " << endl;
         cout << "9. Time: " << getTime(course.s2Time) << endl;
         cout << "10. Day: " << getDay(course.s2Date) << endl;
+
         cout << endl;
+        cout << "11. Back to the Course Info." << endl;
         cout << "Your option: ";
         cin >> n;
 
@@ -955,6 +957,9 @@ void updateCourse(Course &course, string address, string schoolYear, string term
                 cout << endl;
             }
             break;
+        case 11:
+            viewCourseInfo(address, schoolYear, term, nameCourse);
+            return;
         }
 
         cout << endl;
@@ -1217,7 +1222,7 @@ bool checkTime(string time)
     return false;
 }
 
-bool checkdate(int m, int d, int y)
+bool checkdate(int d, int m, int y)
 {
     if (!(1 <= m && m <= 12))
         return false;
@@ -1533,8 +1538,9 @@ string removeType(string s)
 
 void ListAllFileNames(string address, bool isFile, string arr[], int &num)
 {
-
-    // libraries:  sys\stat.h, dirent.h, conio.h
+    // true: file, false: folder
+    // address: .\inputs\School years\2019 - 2020, true,
+    //  libraries:  sys\stat.h, dirent.h, conio.h
     struct dirent *d;
     struct stat dst;
 
@@ -1611,3 +1617,110 @@ void DeleteFolder(string path)
     cout << "Successfully deleted..." << endl;
     getch();
 }
+
+// <---------------------------- show how many days left until the expiration of the registration date ---------------------------------->
+
+int LeapYears(int year, int month)
+{ // sub - function to function CheckDate()
+    int years = year;
+    if (month <= 2)
+    {
+        years--;
+    }
+    return (years / 4 - years / 100 + years / 400);
+}
+int CountDays(tm *y, CourseDate x)
+{ // sub - function to function CheckDate()
+    int monthDays[12] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+    long int n1 = (y->tm_year + 1900) * 365 + y->tm_mday; // somehow (local_time->tm_year = current year - 1990)
+    for (int i = 0; i < y->tm_mon; i++)
+    {                       //        (current1 month = 1 + local_time->tm_mon)
+        n1 += monthDays[i]; // don't ask me because idk why too  ¯\_( ͡° ͜ʖ ͡°)_/¯
+    }
+    n1 += LeapYears(y->tm_year + 1900, y->tm_mon + 1);
+
+    long int n2 = x.end_year * 365 + x.end_day;
+    for (int i = 0; i < x.end_month - 1; i++)
+    {
+        n2 += monthDays[i];
+    }
+    n2 += LeapYears(x.end_year, x.end_month);
+    return (n2 - n1);
+}
+
+bool isDateInRange(int day, int month, int year, int startDay, int startMonth, int startYear, int endDay, int endMonth, int endYear)
+{
+    int entryDate = (year * 10000) + (month * 100) + day;
+    int startDate = (startYear * 10000) + (startMonth * 100) + startDay;
+    int endDate = (endYear * 10000) + (endMonth * 100) + endDay;
+
+    if (entryDate >= startDate && entryDate <= endDate)
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
+
+void getRemainDayOfRegistrationDate(CourseDate Date)
+{
+    time_t ttime = time(0);
+    struct tm *local_time = localtime(&ttime);
+
+    int curMon = local_time->tm_mon + 1;
+    int curDay = local_time->tm_mday;
+    int curYear = local_time->tm_year + 1900;
+
+    bool ok = isDateInRange(curDay, curMon, curYear, Date.start_day, Date.start_month, Date.start_year, Date.end_day, Date.end_month, Date.end_year);
+
+    // 28/3/2022 --> 2/4/2022
+    // 29/3/2022
+
+    if (!ok)
+    {
+        int dayRemain = CountDays(local_time, Date);
+        if (dayRemain > 0)
+        {
+            Date.end_day = Date.start_day;
+            Date.end_month = Date.start_month;
+            Date.end_year = Date.start_year;
+            dayRemain = CountDays(local_time, Date);
+            if (dayRemain == 1)
+            {
+                cout << "There is " << dayRemain << " day left until Registration Day" << endl;
+            }
+            else
+            {
+                cout << "There are " << dayRemain << " days left until Registration Day" << endl;
+            }
+        }
+        else
+        {
+            cout << "The Registration date ended in " << (-1) * dayRemain << " ago." << endl;
+        }
+
+        return;
+    }
+
+    cout << "....Checking days left to register...." << endl;
+    if (CountDays(local_time, Date) == 0)
+    {
+        cout << "This is the last day of the course registration session." << endl;
+    }
+    else
+    {
+        cout << "Days left untill expiration: ";
+        if (CountDays(local_time, Date) > 1)
+        {
+            cout << CountDays(local_time, Date) << " days." << endl;
+        }
+        else
+        {
+            cout << CountDays(local_time, Date) << " day." << endl;
+        }
+    }
+}
+
+// <---------------------------- the end of  show how many days left until the expiration of the registration date------------------------------>

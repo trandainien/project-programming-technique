@@ -59,6 +59,11 @@ struct CourseList
     CourseList *next;
 };
 
+struct CourseDate
+{
+    int start_day, start_month, start_year, end_day, end_month, end_year;
+};
+
 void start();
 void loginSection();
 void openCSVFileFromUserInput();
@@ -110,3 +115,9 @@ void DeleteFolder(string path);
 // format
 template <class T>
 void printElement(T t, const int &width);
+
+// the remain days of the registration date
+int LeapYears(int year, int month);
+int CountDays(tm *y, CourseDate x);
+bool isDateInRange(int day, int month, int year, int startDay, int startMonth, int startYear, int endDay, int endMonth, int endYear);
+void getRemainDayOfRegistrationDate(CourseDate Date);
