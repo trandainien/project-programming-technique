@@ -722,9 +722,10 @@ void viewCourseInfo(string address, string schoolYear, string term, string nameC
     cout << "Day: " << getDay(course.s2Date) << endl;
     cout << endl;
 
-    cout << "1. Update Course" << endl;
-    cout << "2. Delete Course" << endl;
-    cout << "3. Back to the view Course section" << endl;
+    cout << "1. View Students In Course" << endl;
+    cout << "2. Update Course" << endl;
+    cout << "3. Delete Course" << endl;
+    cout << "4. Back to the view Course section" << endl;
     cout << "Your option: ";
     cin >> n;
 
@@ -733,26 +734,127 @@ void viewCourseInfo(string address, string schoolYear, string term, string nameC
     switch (n)
     {
     case 1:
-        updateCourse(course, address, schoolYear, term, nameCourse);
+        viewStudentsInCourse(address, schoolYear, term, nameCourse);
+        break;
     case 2:
+        updateCourse(course, address, schoolYear, term, nameCourse);
+        break;
+    case 3:
         url = "./inputs/School years/" + schoolYear + "/Semesters/" + term + "/" + nameCourse;
 
         file1 = url + "/Course Info.csv";
         file2 = url + "/Student Score Board.csv";
-        cout << file1 << ' ' << file2 << endl;
+        // cout << file1 << ' ' << file2 << endl;
         DeleteFile(file1);
 
         DeleteFile(file2);
 
         DeleteFolder(url);
 
+        cout << "Successfully deleted...Hit anything to continue...";
+        getch();
+
         viewCourse(address, schoolYear, term);
-    case 3:
+        break;
+    case 4:
         viewCourse(address, schoolYear, term);
+        break;
     }
     // update course
     // delete course
     // back to the view course
+}
+
+void viewStudentsInCourse(string address, string schoolYear, string term, string nameCourse)
+{
+    system("CLS");
+    cout << "***------------------   Students in " + nameCourse + " Class ----------------***" << endl;
+
+    Node *pHead = nullptr; // student list
+    getStudentListInFile(pHead, address, schoolYear, term, nameCourse);
+
+    // print that SLL
+
+    printElement("No", 5);
+    printElement("ID", 15);
+    printElement("FullName", 20);
+
+    cout << endl;
+    while (pHead)
+    {
+        printElement(pHead->student.no, 5);
+        printElement(pHead->student.ID, 15);
+        printElement(pHead->student.LastName + " " + pHead->student.FirstName, 20);
+        cout << endl;
+        pHead = pHead->next;
+    }
+
+    cout << endl;
+
+    int n;
+
+    cout << "1. Back to The Course Info" << endl;
+    cout << "2. Log out" << endl;
+    cout << "Your option: ";
+    cin >> n;
+
+    if (n == 1)
+    {
+        viewCourseInfo(address, schoolYear, term, nameCourse);
+    }
+    else
+    {
+        loginSection();
+    }
+}
+
+void getStudentListInFile(Node *&pHead, string address, string schoolYear, string term, string nameCourse)
+{
+    // read file
+    ifstream input;
+    input.open("./inputs/School years/" + schoolYear + "/" + "/Semesters/" + term + "/" + nameCourse + "/Student Score Board.csv");
+    string temp;
+    getline(input, temp);
+    string no, ID, LastName, FirstName;
+
+    Node *pCur = pHead;
+
+    while (!input.eof())
+    {
+        getline(input, no, ',');
+        getline(input, ID, ',');
+        getline(input, LastName, ',');
+        getline(input, FirstName, ',');
+        getline(input, temp);
+
+        if (no == "")
+            return;
+
+        if (!pHead)
+        {
+            pHead = new Node;
+            pHead->student.no = no;
+            pHead->student.ID = ID;
+            pHead->student.LastName = LastName;
+            pHead->student.FirstName = FirstName;
+
+            pHead->next = nullptr;
+            pCur = pHead;
+        }
+        else
+        {
+            pCur->next = new Node;
+            pCur = pCur->next;
+            pCur->student.no = no;
+            pCur->student.ID = ID;
+            pCur->student.LastName = LastName;
+            pCur->student.FirstName = FirstName;
+            pCur->next = nullptr;
+        }
+    }
+
+    input.close();
+    // turn info from file to SLL
 }
 
 void updateCourse(Course &course, string address, string schoolYear, string term, string nameCourse)
@@ -1602,8 +1704,8 @@ void DeleteFile(string path)
         perror("Error deleting file: ");
         cout << endl;
     }
-    cout << "Successfully deleted..." << endl;
-    getch();
+    sleep(1);
+    cout << "=====";
 }
 
 void DeleteFolder(string path)
@@ -1614,8 +1716,8 @@ void DeleteFolder(string path)
         perror("Error deleting folder: ");
         cout << endl;
     }
-    cout << "Successfully deleted..." << endl;
-    getch();
+    sleep(1);
+    cout << "=====" << endl;
 }
 
 // <---------------------------- show how many days left until the expiration of the registration date ---------------------------------->

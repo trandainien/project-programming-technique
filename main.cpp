@@ -2,21 +2,15 @@
 
 int main()
 {
-    // start();
-
-    CourseDate date;
-    date.start_day = 31;
-    date.start_month = 3;
-    date.start_year = 2022;
-
-    date.end_day = 20;
-    date.end_month = 4;
-    date.end_year = 2022;
-    getRemainDayOfRegistrationDate(date);
+     start();
+   
 }
 
 // remind
 
-// quay ve o updated
-
 // view student of the courseviewCourseInfo
+
+// phan view remain date cua Son
+
+// khi mot hoc sinh dang ki hoc phan, khi ghi hoc sinh do vao file, cot diem
+// luc nay chua co, nen la cho -1 diem het, de de dang cho viec lay thong tin hoc sinh

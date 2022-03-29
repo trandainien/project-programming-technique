@@ -12,6 +12,7 @@
 #include <bits/stdc++.h>
 #include <unistd.h>
 #include <filesystem>
+#include <dos.h>
 
 using namespace std;
 
@@ -100,6 +101,8 @@ bool checkDay(string day);
 bool checkTime(string time);
 bool checkdate(int d, int m, int y);
 void viewCourseInfo(string address, string schoolYear, string term, string nameCourse);
+void viewStudentsInCourse(string address, string schoolYear, string term, string nameCourse);
+void getStudentListInFile(Node *&pHead, string address, string schoolYear, string term, string nameCourse);
 void updateCourse(Course &course, string address, string schoolYear, string term, string nameCourse);
 int turnToInt(char c);
 void TurnDate(string date, int &y, int &m, int &d);
